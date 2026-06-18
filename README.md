@@ -4,7 +4,7 @@
 
 ## hola 👋 Bienvenido, te presento mi perfil 👑
 
-<p align="center"><img title="AmilcarGit" src="https://i.postimg.cc/tR5n70Yq/1000526056.jpg"></p>
+<p align="center"><img title="AmilcarGit" src="https://i.postimg.cc/B6Cb8DQ9/1000526055.png"></p>
 
 <p align="center">
 <img src="https://telegra.ph/file/addf80dc3c8ffd5db8a47.png" alt="The-LoliBot-MD" width="900"/>
