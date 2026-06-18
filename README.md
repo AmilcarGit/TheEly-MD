@@ -22,10 +22,7 @@
 </a>
 
 </div>
-<h2 align="center"> MIS PROYECTOS </h2>
-
-<a href="https://github.com/AmilcarGit/ElyssiaBot-MD">![github card](https://github-readme-stats.vercel.app/api/pin/?username=AmilcarGit&repo=ElyssiaBot&theme=merko)</a>
-<a 
+<h2 align="center"> MIS PROYECTOS </h2> 
 
 <a href="https://github.com/AmilcarGit/ElyssiaBot-MD">
   <img src="https://github-readme-stats.vercel.app/api/pin/?username=AmilcarGit&repo=ElyssiaBot-MD&theme=merko" />
