@@ -27,6 +27,10 @@
 <a href="https://github.com/AmilcarGit/ElyssiaBot-MD">![github card](https://github-readme-stats.vercel.app/api/pin/?username=AmilcarGit&repo=ElyssiaBot&theme=merko)</a>
 <a 
 
+<a href="https://github.com/AmilcarGit/ElyssiaBot-MD">
+  <img src="https://github-readme-stats.vercel.app/api/pin/?username=AmilcarGit&repo=ElyssiaBot-MD&theme=merko" />
+</a>
+
 <h2 align="center"> PROYECTOS DE COLABORACIÓN </h2>
 
 <a href="https://github.com/GataNina-Li/GataBot-MD">![github card](https://github-readme-stats.vercel.app/api/pin/?username=GataNina-Li&repo=GataBot-MD&theme=omni)</a>
