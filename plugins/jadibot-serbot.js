@@ -6,7 +6,7 @@ import path from "path"
 import pino from "pino"
 import chalk from "chalk"
 import { exec } from "child_process"
-import { CONNECTING } from "ws"
+import WebSocket from "ws"
 import { makeWASocket } from "../lib/simple.js"
 import { fileURLToPath } from "url"
 
@@ -60,7 +60,7 @@ const tiempoTranscurrido = (ms) => {
 }
 
 let handler = async (m, { conn, args, usedPrefix, command }) => {
-  const activos = global.conns.filter(c => c.user && [CONNECTING, 1].includes(c.ws?.readyState))
+  const activos = global.conns.filter(c => c.user && c.ws?.readyState === WebSocket.OPEN)
 
   if (activos.length >= MAX_SUBBOTS) {
     return conn.sendMessage(m.chat, {
