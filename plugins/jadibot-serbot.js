@@ -92,9 +92,9 @@ let handler = async (m, { conn, args, usedPrefix, command, isOwner }) => {
   global.db.data.users[m.sender].Subs = Date.now()
 }
 
-handler.help = ['qr', 'code', 'reconecsub']
+handler.help = ['qr', 'code']
 handler.tags = ['jadibot']
-handler.command = ['qr', 'code', 'reconecsub']
+handler.command = ['qr', 'code']
 handler.desc = 'Crear tu propio Sub-Bot y reconecta'
 export default handler
 
