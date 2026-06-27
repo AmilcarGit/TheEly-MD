@@ -22,10 +22,10 @@ const tags = {
 
 const defaultMenu = {
   before: `
- ╔════════════════════╗
+ ╔════════════════════
    🌼  T H E E L Y - M D
    _Asistente Virtual ·v1.0.0_
- ╚════════════════════╝
+ ╚════════════════════
 
   🌼 *¡Hola,* *%name*! 
    *%greeting*
@@ -46,8 +46,8 @@ const defaultMenu = {
   𝚃𝙷𝙴𝙴𝙻𝚈-𝙼𝙳 puede hacer ✨
 %readmore`.trimStart(),
 
-  header: '\n  _*⸙══❀ %category ❀══⸙*_\n',
-  body:   '  ═⸙➜  *%cmd* %islimit %isPremium\n  ╚─ ⭑🌼❥⋆   ▸ %desc•',
+  header: '\n  _*☀︎══❀ %category ❀══☀︎*_\n',
+  body:   '  ═✔➜  *%cmd* %islimit %isPremium\n  ╚─ ⭑☘❥⋆   ▸ %desc•',
   footer: '',
 
   after: `
