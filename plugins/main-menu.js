@@ -1,6 +1,5 @@
 import fs from 'fs'
 import { join } from 'path'
-import { xpRange } from '../lib/levelling.js'
 
 const tags = {
   premium:      '💎  Premium',
@@ -65,11 +64,10 @@ const defaultMenu = {
 const handler = async (m, { conn, usedPrefix: _p }) => {
   try {
     const user = global.db.data.users[m.sender] || {}
-    const { exp = 0, limit = 0, level = 0 } = user
-    const { min, xp, max } = xpRange(level, global.multiplier || 1)
     const name = await conn.getName(m.sender)
 
-    const juegosGanados = (user.dbWins || 0) + (user.cartasWins || 0) + (user.triviaWins || 0)
+    const totalGrupos   = Object.keys(global.db.data.chats || {}).filter(id => id.endsWith('@g.us')).length
+    const totalUsuarios = Object.keys(global.db.data.users || {}).length
 
     const ahora    = new Date()
     const horaPeru = new Date(ahora.toLocaleString('en-US', { timeZone: 'America/Lima' }))
@@ -146,18 +144,13 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
       p: _p,
       botname: nombreBot,
       taguser: '@' + m.sender.split('@')[0],
-      exp: exp - min,
-      maxexp: xp,
-      totalexp: exp,
-      xp4levelup: max - exp,
-      level,
-      limit,
       name,
       date,
       time,
       uptime: clockString(process.uptime() * 1000),
       tipo,
-      juegos: juegosGanados,
+      grupos: totalGrupos,
+      usuarios: totalUsuarios,
       readmore: readMore,
       greeting: getGreeting(horaPeru.getHours()),
     }
