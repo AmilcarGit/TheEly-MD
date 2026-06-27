@@ -63,5 +63,6 @@ handler.tags = ['grupo']
 handler.command = ['tag', 'tagultra']
 handler.group = true
 handler.admin = true
+handler.desc     = 'Notifica a todos del grupo'
 
 export default handler
