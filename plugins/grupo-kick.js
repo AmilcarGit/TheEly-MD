@@ -143,7 +143,7 @@ let handler = async (m, { conn, isAdmin, isBotAdmin }) => {
   }
 }
 
-handler.help     = ['kick @usuario', 'sacar @usuario', 'echar @usuario', 'expulsar @usuario']
+handler.help     = ['kick @usuario']
 handler.tags     = ['grupo']
 handler.command  = /^(kick|sacar|echar|expulsar)$/i
 handler.group    = true
