@@ -1,7 +1,7 @@
 {
-  "name": "ElyssiaBot-MD",
-  "version": "2.2.0",
-  "description": "botsita en tu WhatsApp",
+  "name": "TheEly-MD",
+  "version": "1.0.0",
+  "description": "bot",
   "main": "index.js",
   "type": "module",
   "directories": {
