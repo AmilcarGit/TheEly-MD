@@ -35,11 +35,11 @@ const defaultMenu = {
   ║
   ║  🤖  𝑩𝒐𝒕        %botname
   ║  🏷️  𝑴𝒐𝒅𝒐       %tipo
-  ║  ⭐  𝑵𝒊𝒗𝒆𝒍      %level
   ║  📅  𝑭𝒆𝒄𝒉𝒂      %date
   ║  🕐  𝑯𝒐𝒓𝒂       %time
   ║  ⏱️  𝑨𝒄𝒕𝒊𝒗𝒊𝒅𝒂𝒅  %uptime
-  ║  🎮  𝑽𝒊𝒄𝒕𝒐𝒓𝒊𝒂𝒔  %juegos
+  ║  👥  𝑮𝒓𝒖𝒑𝒐𝒔     %grupos
+  ║  👤  𝑼𝒔𝒖𝒂𝒓𝒊𝒐𝒔   %usuarios
   ╚════════════════════════
 
   Selecciona una categoría
