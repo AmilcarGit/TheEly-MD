@@ -220,7 +220,7 @@ handler.before = async (m, { conn }) => {
 
 handler.help    = ['ytmp4 <nombre o link>']
 handler.tags    = ['descargas']
-handler.command = ['ytmp4', 'video', 'ytvideo']
+handler.command = ['ytmp4', 'video', 'ytvideo', play2']
 handler.desc    = 'Busca y descarga videos de YouTube'
 
 export default handler
