@@ -239,7 +239,7 @@ handler.before = async (m, { conn }) => {
 
 handler.help    = ['play <canción o link>']
 handler.tags    = ['descargas']
-handler.command = ['play', 'mp3', 'música']
+handler.command = ['play', 'mp3', 'música', ytmp3']
 handler.desc    = 'Busca y descarga música de YouTube'
 
 export default handler
