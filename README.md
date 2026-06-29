@@ -53,7 +53,7 @@ npm start
 ----
 ### 🙀 Noticias del momento 
 > **En este espacio se publicará comunicados espontáneos, por lo que recuerda visitar frecuentemente el repositorio para estar al tanto del proyecto.**
-###C ualquier novedad al respecto será anunciada a través de nuestras redes oficiales. [Más información.](https://whatsapp.com/channel/0029Vb8G49lKmCPR44sIOE1i)**
+### **Cualquier novedad al respecto será anunciada a través de nuestras redes oficiales. [Más información.](https://whatsapp.com/channel/0029Vb8G49lKmCPR44sIOE1i)**
 ----
 ---
 
