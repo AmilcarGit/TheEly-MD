@@ -3,7 +3,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   const quien  = m.mentionedJid?.[0] || m.quoted?.sender
   const monto  = parseInt(args[args.length - 1])
 
-  if (!quien || !monto) return m.reply([
+  if (!quien || isNaN(monto)) return m.reply([
     `╔══〔 🌼 *THEELY-MD — DAR MONEDAS* 〕══╗`,
     `║`,
     `║ 💡 *Uso:*`,
@@ -17,45 +17,30 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
     `╚══════════════════════════════════╝`
   ].join('\n'))
 
-  const destino = global.db.data.users[quien]
-  if (!destino) return m.reply([
-    `╔══〔 🌼 *THEELY-MD — DAR MONEDAS* 〕══╗`,
-    `║`,
-    `║ ❌ *Usuario no encontrado~*`,
-    `║ Ese usuario no está registrado`,
-    `║`,
-    `╚══════════════════════════════════╝`
-  ].join('\n'))
-
-  const antesCoins = destino.coin || 0
-
-  if (monto === 0) {
-    destino.coin = 0
-    global.markDatabaseModified?.()
-    await global.db.write?.()
-    await m.react('🔄')
-    return conn.sendMessage(m.chat, {
-      text: [
-        `╔══〔 🌼 *THEELY-MD — DAR MONEDAS* 〕══╗`,
-        `║`,
-        `║ 🔄 *Monedas reseteadas~*`,
-        `║`,
-        `║ 👤 @${quien.split('@')[0]}`,
-        `║ 💰 *Antes:* ${antesCoins} ${moneda}`,
-        `║ 💰 *Ahora:* 0 ${moneda}`,
-        `║`,
-        `╚══════════════════════════════════╝`
-      ].join('\n'),
-      mentions: [quien]
-    }, { quoted: m })
+  // ── Inicializar usuario si no existe ──
+  if (!global.db.data.users[quien]) {
+    global.db.data.users[quien] = {
+      exp: 0, coin: 0, bank: 0, level: 0,
+      registered: false, premium: false,
+      warn: 0, diamond: 0
+    }
   }
 
-  destino.coin = Math.max(0, antesCoins + monto)
-  global.markDatabaseModified?.()
-  await global.db.write?.()
+  const antesCoins = global.db.data.users[quien].coin || 0
 
-  const accion = monto > 0 ? '➕ *Añadidas*' : '➖ *Quitadas*'
-  const emoji  = monto > 0 ? '💰' : '💸'
+  if (monto === 0) {
+    global.db.data.users[quien].coin = 0
+  } else {
+    global.db.data.users[quien].coin = Math.max(0, antesCoins + monto)
+  }
+
+  const ahoraCoins = global.db.data.users[quien].coin
+
+  // ── Forzar guardado inmediato ──
+  await global.db.write()
+
+  const accion = monto === 0 ? '🔄 *Reseteadas*' : monto > 0 ? '➕ *Añadidas*' : '➖ *Quitadas*'
+  const emoji  = monto === 0 ? '🔄' : monto > 0 ? '💰' : '💸'
 
   await m.react(emoji)
   await conn.sendMessage(m.chat, {
@@ -67,7 +52,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
       `║ 👤 @${quien.split('@')[0]}`,
       `║ 💰 *Cantidad:* ${monto > 0 ? '+' : ''}${monto} ${moneda}`,
       `║ 📊 *Antes:*    ${antesCoins} ${moneda}`,
-      `║ 📊 *Ahora:*    ${destino.coin} ${moneda}`,
+      `║ 📊 *Ahora:*    ${ahoraCoins} ${moneda}`,
       `║`,
       `║ 👑 *Acción del Owner~*`,
       `║`,
