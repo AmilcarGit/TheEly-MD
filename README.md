@@ -43,6 +43,14 @@ git clone https://github.com/AmilcarGit/TheEly-MD.git && cd TheEly-MD
 ```bash
 npm start
 ```
+> *Si aparece **(Y/I/N/O/D/Z) [default=N] ?** use la letra **"y"** y luego **"ENTER"** para continuar con la instalación.*
+</details>
+
+<details>
+  <summary><b>Instalación mediante archivos</b></summary>
+ 
+> *Descarga y Descomprime*
+
 
 ---
 
