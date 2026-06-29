@@ -50,7 +50,13 @@ npm start
 
 > *Descarga y Descomprime*
 
-
+----
+### 🙀 Noticias del momento 
+> **En este espacio se publicará comunicados espontáneos, por lo que recuerda visitar frecuentemente el repositorio para estar al tanto del proyecto.**
+#### El Multi lenguaje GataBot llegará a su fin...
+> [!IMPORTANT]
+> **La opción para editar el idioma será descontinuada en una futura versión. Esto significa que, a partir de esa actualización, el soporte para múltiples idiomas será eliminado y solo estará disponible en español. Sin embargo, si en el futuro encontramos una forma eficiente de equilibrar la facilidad para la comunidad de editar el bot y mantener un buen rendimiento, esta decisión podría reconsiderarse. Cualquier novedad al respecto será anunciada a través de nuestras redes oficiales. [Más información.](https://whatsapp.com/channel/0029VatPwXw7Noa8n1Vinx3g)**
+----
 ---
 
 ## 📌 Descripción
