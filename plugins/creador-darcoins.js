@@ -17,26 +17,42 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
     `╚══════════════════════════════════╝`
   ].join('\n'))
 
+  // ── Normalizar JID (fix multi-device) ──
+  const normalizarJid = (jid) => {
+    if (!jid) return jid
+    return jid.includes(':')
+      ? jid.split(':')[0] + '@s.whatsapp.net'
+      : jid
+  }
+
+  const jidNormal = normalizarJid(quien)
+
+  // ── Buscar usuario con JID normalizado o con el original ──
+  const jidReal = global.db.data.users[jidNormal]
+    ? jidNormal
+    : global.db.data.users[quien]
+      ? quien
+      : jidNormal
+
   // ── Inicializar usuario si no existe ──
-  if (!global.db.data.users[quien]) {
-    global.db.data.users[quien] = {
+  if (!global.db.data.users[jidReal]) {
+    global.db.data.users[jidReal] = {
       exp: 0, coin: 0, bank: 0, level: 0,
       registered: false, premium: false,
       warn: 0, diamond: 0
     }
   }
 
-  const antesCoins = global.db.data.users[quien].coin || 0
+  const antesCoins = global.db.data.users[jidReal].coin || 0
 
   if (monto === 0) {
-    global.db.data.users[quien].coin = 0
+    global.db.data.users[jidReal].coin = 0
   } else {
-    global.db.data.users[quien].coin = Math.max(0, antesCoins + monto)
+    global.db.data.users[jidReal].coin = Math.max(0, antesCoins + monto)
   }
 
-  const ahoraCoins = global.db.data.users[quien].coin
+  const ahoraCoins = global.db.data.users[jidReal].coin
 
-  // ── Forzar guardado inmediato ──
   await global.db.write()
 
   const accion = monto === 0 ? '🔄 *Reseteadas*' : monto > 0 ? '➕ *Añadidas*' : '➖ *Quitadas*'
@@ -49,7 +65,8 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
       `║`,
       `║ ${accion}`,
       `║`,
-      `║ 👤 @${quien.split('@')[0]}`,
+      `║ 👤 @${jidReal.split('@')[0].split(':')[0]}`,
+      `║ 🔑 *JID:* ${jidReal}`,
       `║ 💰 *Cantidad:* ${monto > 0 ? '+' : ''}${monto} ${moneda}`,
       `║ 📊 *Antes:*    ${antesCoins} ${moneda}`,
       `║ 📊 *Ahora:*    ${ahoraCoins} ${moneda}`,
