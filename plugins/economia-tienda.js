@@ -1,4 +1,3 @@
-
 const ITEMS = [
   // ── HERRAMIENTAS ──
   { id: 1,  nombre: 'Pico de Hierro',    emoji: '⛏️',  precio: 300,   categoria: 'herramienta', desc: 'Mejora tus ganancias al minar',           venta: 150  },
@@ -135,9 +134,10 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
     `╚══════════════════════════════════╝`
   ].join('\n'))
 
-  user.coin -= item.precio
-  if (!user.inventario) user.inventario = []
-  user.inventario.push({ id: item.id, nombre: item.nombre, emoji: item.emoji, fecha: Date.now() })
+  global.db.data.users[m.sender].coin -= item.precio
+  if (!global.db.data.users[m.sender].inventario) global.db.data.users[m.sender].inventario = []
+  global.db.data.users[m.sender].inventario.push({ id: item.id, nombre: item.nombre, emoji: item.emoji, fecha: Date.now() })
+  await global.db.write()
 
   await m.react('🛒')
   await m.reply([
