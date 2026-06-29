@@ -31,6 +31,8 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
 
   if (monto === 0) {
     destino.coin = 0
+    global.markDatabaseModified?.()
+    await global.db.write?.()
     await m.react('🔄')
     return conn.sendMessage(m.chat, {
       text: [
@@ -49,6 +51,8 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   }
 
   destino.coin = Math.max(0, antesCoins + monto)
+  global.markDatabaseModified?.()
+  await global.db.write?.()
 
   const accion = monto > 0 ? '➕ *Añadidas*' : '➖ *Quitadas*'
   const emoji  = monto > 0 ? '💰' : '💸'
