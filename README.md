@@ -89,7 +89,7 @@ termux-setup-storage
 apt update && apt upgrade && pkg install -y git nodejs ffmpeg imagemagick yarn
 ```
 ```bash
-git clone https://github.com/AmilcarGit/TheEly-MD && cd TheEly-MD
+git clone https://github.com/AmilcarGit/TheEly-MD.git && cd TheEly-MD
 ```
 ```bash
  npm install
