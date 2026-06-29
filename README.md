@@ -22,7 +22,7 @@
   
 | Tema | Descripción | Atajo |
 |------|-------------|-------|
-| 🔑 **Owners** | *Define quiénes tendrán control total del bot.* | [![Here](https://img.shields.io/badge/Aquí-green)](https://github.com/GataNina-Li/GataBot-MD/blob/c74265fe42d465b52d64209a50b02a5af437b8b2/config.js#L15) |
+| 🔑 **Owners** | *Define quiénes tendrán control total del bot.* | [![Here](https://img.shields.io/badge/Aquí-green)](https://github.com/AmilcarGit/TheEly-MD/blob/main/config.js) |
 | ✏️ **Modificar nombre** | *Modifica el nombre del bot de manera sencilla.* | [![Here](https://img.shields.io/badge/Aquí-green)](https://github.com/GataNina-Li/GataBot-MD/blob/c74265fe42d465b52d64209a50b02a5af437b8b2/config.js#L144) |
 | 📲 **Conectar con código (opcional)** | *Vincula directamente tu número para recibir código de 8 dígitos.* | [![Here](https://img.shields.io/badge/Aquí-green)](https://github.com/GataNina-Li/GataBot-MD/blob/c74265fe42d465b52d64209a50b02a5af437b8b2/config.js#L44) |
 | 🆙 **Nivel de usuarios** | *Ajusta la dificultad para que los usuarios suban de nivel en el bot.* | [![Here](https://img.shields.io/badge/Aquí-green)](https://github.com/GataNina-Li/GataBot-MD/blob/c74265fe42d465b52d64209a50b02a5af437b8b2/config.js#L220) |
