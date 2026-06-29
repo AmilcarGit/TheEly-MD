@@ -71,24 +71,20 @@ Antes de instalar, asegúrate de tener instalado en tu sistema:
 
 ## 🚀 Instalación paso a paso
 
-# ACTUALIZAR E INSTALAR REQUISITOS
-pkg update -y && pkg upgrade -y
-pkg install -y nodejs git ffmpeg imagemagick
+
+## Instalación por Termux
+
+> [!IMPORTANT]
+> **No garantizamos un funcionamiento perfecto en Termux, aunque trabajamos constantemente para asegurar una buena compatibilidad. Si experimentas lentitud o errores, por favor envía una solicitud con la evidencia correspondiente para que nuestro equipo pueda solucionarlo. Si el problema persiste, te recomendamos considerar los servicios de alojamiento de bots de nuestros patrocinadores.**
+
+<details>
+  <summary><b>Instalación Automática</b></summary>
+ 
+[![blog](https://img.shields.io/badge/Instalacion-Automatica-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/shorts/PESW8LXXlOI?feature=share)
+> *Comandos para instalar de forma automática en Termux*
+```bash
 termux-setup-storage
-
-# CLONAR E INSTALAR BOT
-rm -rf TheEly-MD
-git clone https://github.com/AmilcarGit/TheEly-MD
-cd TheEly-MD
-npm install
-
-# INICIAR (elige-pairin 
-# npm start
-
-# MANTENER ACTIVO 24/7 EN TERMUX
-npm install -g pm2
-pkg install -y wake-lock
-termux-wake-lock
-pm2 start index.js --name TheEly-MD -- --pairing
-pm2 startup
-pm2 save
+```
+```bash
+apt update -y && yes | apt upgrade && pkg install -y bash wget mpv && wget -O - https://raw.githubusercontent.com/GataNina-Li/GataBot-MD/master/gata.sh | bash
+```
