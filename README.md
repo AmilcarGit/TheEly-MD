@@ -46,9 +46,8 @@ npm start
 > *Si aparece **(Y/I/N/O/D/Z) [default=N] ?** use la letra **"y"** y luego **"ENTER"** para continuar con la instalación.*
 </details>
 
-<details>
-  <summary><b>Instalación mediante archivos</b></summary>
- 
+</details>
+
 > *Descarga y Descomprime*
 
 
