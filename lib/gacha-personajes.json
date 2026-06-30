@@ -1,0 +1,53 @@
+{
+  "comun": [
+    { "nombre": "Krillin", "origen": "Dragon Ball", "emoji": "🟡" },
+    { "nombre": "Sakura Haruno", "origen": "Naruto", "emoji": "🌸" },
+    { "nombre": "Tanjiro (Base)", "origen": "Demon Slayer", "emoji": "⚔️" },
+    { "nombre": "Yamcha", "origen": "Dragon Ball", "emoji": "🟡" },
+    { "nombre": "Konohamaru", "origen": "Naruto", "emoji": "🌸" },
+    { "nombre": "Genos", "origen": "One Punch Man", "emoji": "🤖" },
+    { "nombre": "Lucy (Base)", "origen": "Fairy Tail", "emoji": "✨" },
+    { "nombre": "Inosuke (Base)", "origen": "Demon Slayer", "emoji": "🐗" }
+  ],
+  "raro": [
+    { "nombre": "Piccolo", "origen": "Dragon Ball", "emoji": "💚" },
+    { "nombre": "Rock Lee", "origen": "Naruto", "emoji": "🌸" },
+    { "nombre": "Zenitsu", "origen": "Demon Slayer", "emoji": "⚡" },
+    { "nombre": "Bakugo", "origen": "My Hero Academia", "emoji": "💥" },
+    { "nombre": "Erza Scarlet", "origen": "Fairy Tail", "emoji": "✨" },
+    { "nombre": "Genkai", "origen": "Yu Yu Hakusho", "emoji": "👵" },
+    { "nombre": "Saitama (Casual)", "origen": "One Punch Man", "emoji": "🤖" },
+    { "nombre": "Kakashi Joven", "origen": "Naruto", "emoji": "🌸" }
+  ],
+  "epico": [
+    { "nombre": "Vegeta", "origen": "Dragon Ball", "emoji": "💙" },
+    { "nombre": "Itachi Uchiha", "origen": "Naruto", "emoji": "🔴" },
+    { "nombre": "Giyu Tomioka", "origen": "Demon Slayer", "emoji": "🌊" },
+    { "nombre": "Todoroki", "origen": "My Hero Academia", "emoji": "🔥" },
+    { "nombre": "Natsu Dragneel", "origen": "Fairy Tail", "emoji": "🔥" },
+    { "nombre": "Levi Ackerman", "origen": "Attack on Titan", "emoji": "🗡️" },
+    { "nombre": "Killua Zoldyck", "origen": "Hunter x Hunter", "emoji": "⚡" },
+    { "nombre": "Gaara", "origen": "Naruto", "emoji": "🟤" }
+  ],
+  "legendario": [
+    { "nombre": "Goku Ultra Instinct", "origen": "Dragon Ball", "emoji": "🤍" },
+    { "nombre": "Naruto Modo Sabio", "origen": "Naruto", "emoji": "🟠" },
+    { "nombre": "Tanjiro Sol", "origen": "Demon Slayer", "emoji": "☀️" },
+    { "nombre": "All Might", "origen": "My Hero Academia", "emoji": "💪" },
+    { "nombre": "Saitama Serio", "origen": "One Punch Man", "emoji": "👊" },
+    { "nombre": "Gojo Satoru", "origen": "Jujutsu Kaisen", "emoji": "🔵" },
+    { "nombre": "Eren Titán", "origen": "Attack on Titan", "emoji": "🟫" },
+    { "nombre": "Luffy Gear 5", "origen": "One Piece", "emoji": "🟡" }
+  ],
+  "mitico": [
+    { "nombre": "Goku Ultra Instinto Perfecto", "origen": "Dragon Ball", "emoji": "🌌" },
+    { "nombre": "Madara Rikudo", "origen": "Naruto", "emoji": "♾️" },
+    { "nombre": "Muzan Kibutsuji", "origen": "Demon Slayer", "emoji": "🔮" },
+    { "nombre": "Gojo Dominio Infinito", "origen": "Jujutsu Kaisen", "emoji": "♾️" },
+    { "nombre": "Saitama (One Punch)", "origen": "One Punch Man", "emoji": "💫" },
+    { "nombre": "Luffy Joy Boy", "origen": "One Piece", "emoji": "👑" }
+  ],
+  "ely_especial": [
+    { "nombre": "Ely-chan 🌼", "origen": "TheEly-MD", "emoji": "🌼" }
+  ]
+}
