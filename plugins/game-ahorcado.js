@@ -1,176 +1,197 @@
-const PALABRAS = [
-  'whatsapp', 'javascript', 'programacion', 'computadora', 'telefono',
-  'internet', 'tecnologia', 'inteligencia', 'desarrollador', 'aplicacion',
-  'servidor', 'database', 'algoritmo', 'funcion', 'variable', 'biblioteca',
-  'naruto', 'gohan', 'goku', 'vegeta', 'luffy', 'tanjiro', 'eren'
+import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys'
+
+const categorias = {
+  '💻 Tecnología': ['JAVASCRIPT', 'ANDROID', 'WHATSAPP', 'PROGRAMACION', 'COMPUTADORA', 'INTERNET', 'BAILEYS', 'SERVIDOR'],
+  '🎮 Videojuegos': ['MINECRAFT', 'FREEFIRE', 'FORTNITE', 'POKEMON', 'ROBLOX', 'VALORANT'],
+  '🌼 TheEly':     ['THEELY', 'AMILCAR', 'PLUGIN', 'HANDLER', 'SUBBOT', 'GACHA'],
+  '🌎 Países':     ['COLOMBIA', 'MEXICO', 'ARGENTINA', 'VENEZUELA', 'PERU', 'BRASIL']
+}
+
+const todasLasPalabras = Object.entries(categorias).flatMap(([cat, words]) =>
+  words.map(w => ({ palabra: w, categoria: cat }))
+)
+
+const dibujos = [
+  '  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========',
+  '  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========',
+  '  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========',
+  '  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========',
+  '  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========',
+  '  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========',
+  '  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n========='
 ]
 
-const sesiones = {}
-const RECOMPENSA = { min: 80, max: 200 }
-const VIDAS_MAX = 6
+function crearMensaje(chat, text, userId, m) {
+  const letrasDisponibles = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => ({
+    title: l,
+    id: `ahorcado_${l}_${userId}`
+  }))
 
-function dibujarAhorcado(vidas) {
-  const dibujos = [
-    `║ 💀 ¡Te quedaste sin vidas!`,
-    `║   😣\n║  /|\\\n║  /`,
-    `║   😟\n║  /|\\`,
-    `║   😐\n║   |`,
-    `║   🙂`,
-    `║   😊`,
-    `║   😄 ¡Empezando!`
-  ]
-  return dibujos[vidas] !== undefined ? dibujos[vidas] : dibujos[0]
+  const buttons = [{
+    name: 'single_select',
+    buttonParamsJson: JSON.stringify({
+      title: '🔤 ELIGE UNA LETRA',
+      sections: [{
+        title: '🔤 Letras disponibles',
+        rows: letrasDisponibles
+      }]
+    })
+  }]
+
+  return generateWAMessageFromContent(chat, {
+    viewOnceMessage: {
+      message: {
+        messageContextInfo: {},
+        interactiveMessage: proto.Message.InteractiveMessage.create({
+          header: {
+            title: '🌼 THEELY-MD — AHORCADO',
+            subtitle: 'Adivina la palabra letra por letra',
+            hasMediaAttachment: false
+          },
+          body: { text },
+          footer: { text: '🎮 Powered by TheEly-MD 🌼' },
+          nativeFlowMessage: { buttons }
+        })
+      }
+    }
+  }, { quoted: m })
 }
 
-const handler = async (m, { conn }) => {
-  if (sesiones[m.chat]) return m.reply([
-    `╔══〔 🌼 *THEELY-MD — AHORCADO* 〕══╗`,
+let handler = async (m, { conn }) => {
+  global.ahorcado = global.ahorcado || {}
+
+  const seleccion = todasLasPalabras[Math.floor(Math.random() * todasLasPalabras.length)]
+
+  global.ahorcado[m.sender] = {
+    palabra:   seleccion.palabra,
+    categoria: seleccion.categoria,
+    usadas:    [],
+    vidas:     6,
+    inicio:    Date.now()
+  }
+
+  const progreso = '\\_ '.repeat(seleccion.palabra.length).trim()
+
+  const text = [
+    `╔══〔 🌼 *AHORCADO* 〕══╗`,
     `║`,
-    `║ ⚠️ Ya hay un juego activo~`,
-    `║ Usa *.letra <letra>* para jugar`,
+    `║ ${dibujos[0]}`,
+    `║`,
+    `║ ❤️ *Vidas:* 6/6`,
+    `║ 📂 *Categoría:* ${seleccion.categoria}`,
+    `║ 🔤 *Letras:* ${seleccion.palabra.length}`,
+    `║`,
+    `║ 📝 ${progreso}`,
+    `║`,
+    `║ 🔡 *Usadas:* Ninguna`,
+    `║`,
+    `║ 👇 *Elige una letra para empezar~*`,
     `║`,
     `╚══════════════════════════════════╝`
-  ].join('\n'))
+  ].join('\n')
 
-  const palabra = PALABRAS[Math.floor(Math.random() * PALABRAS.length)]
-  const oculta  = Array(palabra.length).fill('_')
-
-  sesiones[m.chat] = {
-    palabra,
-    oculta,
-    vidas: VIDAS_MAX,
-    intentadas: [],
-    iniciador: m.sender,
-    tiempo: setTimeout(() => {
-      if (sesiones[m.chat]) {
-        conn.sendMessage(m.chat, {
-          text: `╔══〔 🌼 *THEELY-MD — AHORCADO* 〕══╗\n║\n║ ⏰ *¡Tiempo agotado!*\n║ La palabra era: *${palabra}*\n║\n╚══════════════════════════════════╝`
-        })
-        delete sesiones[m.chat]
-      }
-    }, 3 * 60 * 1000)
-  }
-
-  await m.react('🎯')
-  await conn.sendMessage(m.chat, {
-    text: [
-      `╔══〔 🌼 *THEELY-MD — AHORCADO* 〕══╗`,
-      `║`,
-      dibujarAhorcado(VIDAS_MAX),
-      `║`,
-      `║ 📝 *Palabra:* ${oculta.join(' ')}`,
-      `║ ❤️ *Vidas:* ${VIDAS_MAX}`,
-      `║`,
-      `║ 💡 Usa *.letra <letra>* para jugar`,
-      `║ ⏰ 3 minutos para terminar~`,
-      `║`,
-      `╚══════════════════════════════════╝`
-    ].join('\n')
-  }, { quoted: m })
+  const msg = crearMensaje(m.chat, text, m.sender, m)
+  await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
 }
 
-handler.before = async (m, { conn, command, args }) => {
-  if (command !== 'letra' || !sesiones[m.chat]) return false
+handler.before = async (m, { conn }) => {
+  const nativeFlow = m.message?.interactiveResponseMessage?.nativeFlowResponseMessage
+  if (!nativeFlow) return
 
-  const sesion = sesiones[m.chat]
-  const letra  = (args[0] || '').toLowerCase().trim()
+  try {
+    const data = JSON.parse(nativeFlow.paramsJson || '{}')
+    const id = data.id
+    if (!id?.startsWith('ahorcado_')) return
 
-  if (!letra || letra.length !== 1) {
-    await m.reply(`❌ Escribe una sola letra: *.letra a*`)
-    return true
-  }
-
-  if (sesion.intentadas.includes(letra)) {
-    await m.reply(`⚠️ Ya intentaste esa letra~`)
-    return true
-  }
-
-  sesion.intentadas.push(letra)
-  const moneda = global.moneda || 'coins'
-
-  if (sesion.palabra.includes(letra)) {
-    for (let i = 0; i < sesion.palabra.length; i++) {
-      if (sesion.palabra[i] === letra) sesion.oculta[i] = letra
+    const [, letra, userId] = id.split('_')
+    const game = global.ahorcado?.[userId]
+    if (!game) {
+      await conn.sendMessage(m.chat, {
+        text: `╔══〔 🌼 *AHORCADO* 〕══╗\n║\n║ ❌ No hay partida activa~\n║ 💡 Usa *.ahorcado* para empezar\n║\n╚══════════════════════════════════╝`
+      }, { quoted: m })
+      return true
     }
 
-    if (!sesion.oculta.includes('_')) {
-      // ── GANÓ ──
-      clearTimeout(sesion.tiempo)
-      const recompensa = Math.floor(Math.random() * (RECOMPENSA.max - RECOMPENSA.min + 1)) + RECOMPENSA.min
+    if (game.usadas.includes(letra)) {
+      await conn.sendMessage(m.chat, {
+        text: `╔══〔 🌼 *AHORCADO* 〕══╗\n║\n║ ⚠️ Ya usaste la letra *${letra}*~\n║ 💡 Elige otra letra\n║\n╚══════════════════════════════════╝`
+      }, { quoted: m })
+      return true
+    }
 
-      if (!global.db.data.users[m.sender]) global.db.data.users[m.sender] = { coin: 0 }
-      global.db.data.users[m.sender].coin = (global.db.data.users[m.sender].coin || 0) + recompensa
+    game.usadas.push(letra)
+    const acierto = game.palabra.includes(letra)
+    if (!acierto) game.vidas--
+
+    const progreso = game.palabra.split('').map(l => game.usadas.includes(l) ? l : '\\_').join(' ')
+
+    let estado = ''
+    let reaccion = acierto ? '✅' : '❌'
+
+    const gano = game.palabra.split('').every(l => game.usadas.includes(l))
+    const perdio = game.vidas <= 0
+
+    if (gano) {
+      const tiempoSeg = Math.floor((Date.now() - game.inicio) / 1000)
+      estado = `🏆 *¡GANASTE!* 🎉\n║ ⏱️ Tiempo: ${tiempoSeg}s`
+      reaccion = '🏆'
+
+      const moneda = global.moneda || 'coins'
+      const xp    = Math.floor(Math.random() * 50) + 20
+      const coins = Math.floor(Math.random() * 100) + 50
+
+      if (!global.db.data.users[userId]) global.db.data.users[userId] = { coin: 0, exp: 0 }
+      global.db.data.users[userId].exp  = (global.db.data.users[userId].exp || 0) + xp
+      global.db.data.users[userId].coin = (global.db.data.users[userId].coin || 0) + coins
       await global.db.write()
 
-      await m.react('🎉')
-      await conn.sendMessage(m.chat, {
-        text: [
-          `╔══〔 🌼 *THEELY-MD — AHORCADO* 〕══╗`,
-          `║`,
-          `║ 🎉 *¡Ganaste!*`,
-          `║`,
-          `║ 📝 *Palabra:* ${sesion.palabra}`,
-          `║ 👤 @${m.sender.split('@')[0]}`,
-          `║ 💰 *+${recompensa}* ${moneda}`,
-          `║`,
-          `╚══════════════════════════════════╝`
-        ].join('\n'),
-        mentions: [m.sender]
-      }, { quoted: m })
-
-      delete sesiones[m.chat]
-      return true
+      estado += `\n║ ✨ *+${xp} XP*  💰 *+${coins} ${moneda}*`
+    } else if (perdio) {
+      estado = `💀 *¡PERDISTE!*\n║ 📖 Palabra: *${game.palabra}*`
+      reaccion = '💀'
+    } else {
+      estado = acierto
+        ? `✅ *¡Letra correcta!* "${letra}"`
+        : `❌ *Letra incorrecta* "${letra}" — ${game.vidas} vida(s) restantes`
     }
 
-    await m.react('✅')
-  } else {
-    sesion.vidas--
+    const dibujoActual = dibujos[6 - game.vidas] || dibujos[6]
 
-    if (sesion.vidas <= 0) {
-      // ── PERDIÓ ──
-      clearTimeout(sesion.tiempo)
-      await m.react('💀')
-      await conn.sendMessage(m.chat, {
-        text: [
-          `╔══〔 🌼 *THEELY-MD — AHORCADO* 〕══╗`,
-          `║`,
-          dibujarAhorcado(0),
-          `║`,
-          `║ ❌ *¡Perdiste!*`,
-          `║ 📝 *Palabra era:* ${sesion.palabra}`,
-          `║`,
-          `╚══════════════════════════════════╝`
-        ].join('\n')
-      }, { quoted: m })
-
-      delete sesiones[m.chat]
-      return true
-    }
-
-    await m.react('❌')
-  }
-
-  await conn.sendMessage(m.chat, {
-    text: [
-      `╔══〔 🌼 *THEELY-MD — AHORCADO* 〕══╗`,
+    const text = [
+      `╔══〔 🌼 *AHORCADO* 〕══╗`,
       `║`,
-      dibujarAhorcado(sesion.vidas),
+      `║ ${dibujoActual}`,
       `║`,
-      `║ 📝 *Palabra:* ${sesion.oculta.join(' ')}`,
-      `║ ❤️ *Vidas:* ${sesion.vidas}`,
-      `║ 🔤 *Intentadas:* ${sesion.intentadas.join(', ')}`,
+      `║ ❤️ *Vidas:* ${'❤️'.repeat(game.vidas)}${'🖤'.repeat(6 - game.vidas)}`,
+      `║ 📂 *Categoría:* ${game.categoria}`,
+      `║`,
+      `║ 📝 ${progreso}`,
+      `║`,
+      `║ 🔡 *Usadas:* ${game.usadas.join(' ')}`,
+      `║`,
+      `║ ${estado}`,
+      `║`,
+      gano || perdio ? '' : `║ 👇 *Elige otra letra~*`,
       `║`,
       `╚══════════════════════════════════╝`
-    ].join('\n')
-  }, { quoted: m })
+    ].filter(v => v !== undefined).join('\n')
 
-  return true
+    if (gano || perdio) delete global.ahorcado[userId]
+
+    const msg = crearMensaje(m.chat, text, userId, m)
+    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
+    await m.react(reaccion)
+    return true
+
+  } catch (e) {
+    console.error('❌ Error en ahorcado:', e.message)
+  }
 }
 
-handler.help    = ['ahorcado', 'letra <letra>']
+handler.command = ['ahorcado']
 handler.tags    = ['game']
-handler.command = ['ahorcado', 'hangman', 'letra']
+handler.help    = ['ahorcado']
 handler.register = true
-handler.desc    = 'Juega ahorcado y gana ElyCoins'
+handler.desc    = 'Juega al ahorcado y gana ElyCoins'
 
 export default handler
