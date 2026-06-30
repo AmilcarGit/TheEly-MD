@@ -160,23 +160,28 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   // ── Activar premium/boost automáticamente ──
   let mensajeExtra = ''
 
-  if (item.categoria === 'premium' && item.duracion) {
-    if (item.id >= 12 && item.id <= 16) {
-      // VIP — activa premium
-      const yaEsPremium  = global.db.data.users[m.sender].premium
-      const tiempoActual = yaEsPremium && global.db.data.users[m.sender].premiumTime > Date.now()
-        ? global.db.data.users[m.sender].premiumTime
-        : Date.now()
+  if (item.categoria === 'premium') {
+    if (item.id >= 12 && item.id <= 17) {
+      // VIP — activa premium (id 17 = permanente, duracion 0)
+      global.db.data.users[m.sender].premium = true
 
-      global.db.data.users[m.sender].premium     = true
-      global.db.data.users[m.sender].premiumTime = tiempoActual + item.duracion
+      if (item.id === 17) {
+        // VIP Permanente
+        global.db.data.users[m.sender].premiumTime = 0
+        mensajeExtra = `║ 🌼 *¡Premium PERMANENTE activado!*\n║ 👑 Nunca expira~`
+      } else {
+        const yaActivo     = global.db.data.users[m.sender].premiumTime > Date.now()
+        const tiempoActual = yaActivo ? global.db.data.users[m.sender].premiumTime : Date.now()
 
-      const vence = new Date(global.db.data.users[m.sender].premiumTime)
-        .toLocaleString('es', { timeZone: 'America/Lima' })
+        global.db.data.users[m.sender].premiumTime = tiempoActual + item.duracion
 
-      mensajeExtra = `║ 👑 *Premium activado~*\n║ ⏰ Vence: ${vence}`
+        const vence = new Date(global.db.data.users[m.sender].premiumTime)
+          .toLocaleString('es', { timeZone: 'America/Lima' })
 
-    } else if (item.id === 17) {
+        mensajeExtra = `║ 👑 *Premium activado~*\n║ ⏰ Vence: ${vence}`
+      }
+
+    } else if (item.id === 18) {
       // Boost EXP
       global.db.data.users[m.sender].boostExp     = true
       global.db.data.users[m.sender].boostExpTime = Date.now() + item.duracion
