@@ -56,6 +56,7 @@ const handler = async (m, { conn, usedPrefix }) => {
 handler.help    = ['banner']
 handler.tags    = ['gacha']
 handler.command = ['banner', 'banners']
+handler.register = true
 handler.desc    = 'Muestra el banner actual del gacha'
 
 export default handler
