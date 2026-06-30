@@ -1,17 +1,18 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import fetch from 'node-fetch'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PERSONAJES = JSON.parse(fs.readFileSync(path.join(__dirname, 'lib', 'gacha-personajes.json'), 'utf-8'))
 
 const RAREZAS = {
-  comun:        { nombre: 'Común',        emoji: '⚪', prob: 50,   precio: 100  },
-  raro:         { nombre: 'Raro',         emoji: '🔵', prob: 30,   precio: 100  },
-  epico:        { nombre: 'Épico',        emoji: '🟣', prob: 13,   precio: 100  },
-  legendario:   { nombre: 'Legendario',   emoji: '🟡', prob: 6,    precio: 100  },
-  mitico:       { nombre: 'Mítico',       emoji: '🔴', prob: 0.9,  precio: 100  },
-  ely_especial: { nombre: 'Ely Especial', emoji: '🌼', prob: 0.1,  precio: 100  },
+  comun:        { nombre: 'Común',        emoji: '⚪', prob: 50   },
+  raro:         { nombre: 'Raro',         emoji: '🔵', prob: 30   },
+  epico:        { nombre: 'Épico',        emoji: '🟣', prob: 13   },
+  legendario:   { nombre: 'Legendario',   emoji: '🟡', prob: 6    },
+  mitico:       { nombre: 'Mítico',       emoji: '🔴', prob: 0.9  },
+  ely_especial: { nombre: 'Ely Especial', emoji: '🌼', prob: 0.1  },
 }
 
 const COSTO_TIRADA = 100
@@ -30,6 +31,22 @@ function tirarGacha() {
   }
   const fallback = PERSONAJES.comun[0]
   return { rareza: 'comun', ...RAREZAS.comun, personaje: fallback }
+}
+
+// ── Buscar imagen del personaje (Bing image search sin API key) ──
+async function buscarImagen(nombrePersonaje, origen) {
+  try {
+    const query = encodeURIComponent(`${nombrePersonaje} ${origen} anime`)
+    const res = await fetch(`https://www.bing.com/images/search?q=${query}&form=HDRSC2`, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+    })
+    const html = await res.text()
+    const match = html.match(/murl&quot;:&quot;(https:\/\/[^&]+\.(?:jpg|jpeg|png|webp))/i)
+    if (match && match[1]) return match[1]
+    return null
+  } catch {
+    return null
+  }
 }
 
 const handler = async (m, { conn, args }) => {
@@ -70,6 +87,8 @@ const handler = async (m, { conn, args }) => {
     `╚══════════════════════════════════╝`
   ].join('\n'))
 
+  await m.react('🎴')
+
   global.db.data.users[m.sender].coin -= costoTotal
   if (cantidad === 1) global.db.data.users[m.sender].lastgacha = ahora
 
@@ -93,48 +112,58 @@ const handler = async (m, { conn, args }) => {
     RAREZAS[b.rareza].prob < RAREZAS[a.rareza].prob ? b : a
   )
 
-  await m.react(mejorTirada.emoji)
-
+  // ── 1 SOLA TIRADA — con imagen ──
   if (cantidad === 1) {
     const t = resultados[0]
-    await conn.sendMessage(m.chat, {
-      text: [
-        `╔══〔 🌼 *THEELY-MD — GACHA* 〕══╗`,
-        `║`,
-        `║ 🎴 *¡Tirada completada!*`,
-        `║`,
-        `║ ${t.emoji} *${t.nombre}*`,
-        `║`,
-        `║ ${t.personaje.emoji} *${t.personaje.nombre}*`,
-        `║ 📺 ${t.personaje.origen}`,
-        `║`,
-        `║ 👛 *Saldo:* ${global.db.data.users[m.sender].coin} ${moneda}`,
-        `║`,
-        `╚══════════════════════════════════╝`
-      ].join('\n')
-    }, { quoted: m })
-  } else {
-    const lista = resultados.map((t, i) =>
-      `║ ${i+1}. ${t.emoji} ${t.personaje.emoji} *${t.personaje.nombre}*`
-    ).join('\n')
+    const imagen = await buscarImagen(t.personaje.nombre, t.personaje.origen)
 
-    await conn.sendMessage(m.chat, {
-      text: [
-        `╔══〔 🌼 *THEELY-MD — GACHA x10* 〕══╗`,
-        `║`,
-        `║ 🎴 *¡10 tiradas completadas!*`,
-        `║`,
-        lista,
-        `║`,
-        `║ ⭐ *Mejor obtenido:*`,
-        `║ ${mejorTirada.emoji} ${mejorTirada.personaje.nombre}`,
-        `║`,
-        `║ 👛 *Saldo:* ${global.db.data.users[m.sender].coin} ${moneda}`,
-        `║`,
-        `╚══════════════════════════════════╝`
-      ].join('\n')
-    }, { quoted: m })
+    const caption = [
+      `╔══〔 🌼 *THEELY-MD — GACHA* 〕══╗`,
+      `║`,
+      `║ 🎴 *¡Tirada completada!*`,
+      `║`,
+      `║ ${t.emoji} *${t.nombre}*`,
+      `║`,
+      `║ ${t.personaje.emoji} *${t.personaje.nombre}*`,
+      `║ 📺 ${t.personaje.origen}`,
+      `║`,
+      `║ 👛 *Saldo:* ${global.db.data.users[m.sender].coin} ${moneda}`,
+      `║`,
+      `╚══════════════════════════════════╝`
+    ].join('\n')
+
+    await m.react(t.emoji)
+
+    if (imagen) {
+      await conn.sendMessage(m.chat, { image: { url: imagen }, caption }, { quoted: m })
+    } else {
+      await conn.sendMessage(m.chat, { text: caption }, { quoted: m })
+    }
+    return
   }
+
+  // ── 10 TIRADAS — solo texto (evitar saturar) ──
+  const lista = resultados.map((t, i) =>
+    `║ ${i+1}. ${t.emoji} ${t.personaje.emoji} *${t.personaje.nombre}*`
+  ).join('\n')
+
+  await m.react(mejorTirada.emoji)
+  await conn.sendMessage(m.chat, {
+    text: [
+      `╔══〔 🌼 *THEELY-MD — GACHA x10* 〕══╗`,
+      `║`,
+      `║ 🎴 *¡10 tiradas completadas!*`,
+      `║`,
+      lista,
+      `║`,
+      `║ ⭐ *Mejor obtenido:*`,
+      `║ ${mejorTirada.emoji} ${mejorTirada.personaje.nombre}`,
+      `║`,
+      `║ 👛 *Saldo:* ${global.db.data.users[m.sender].coin} ${moneda}`,
+      `║`,
+      `╚══════════════════════════════════╝`
+    ].join('\n')
+  }, { quoted: m })
 }
 
 handler.help     = ['gacha [10]']
