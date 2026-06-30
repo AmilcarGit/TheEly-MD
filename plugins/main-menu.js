@@ -19,6 +19,7 @@ const tags = {
   ia:           '♞ 𝐈𝐀♔',
   fun:          '𓅋 Diversión𓅍',
   creador:        '☕︎︎ Owner',
+  main:          '𖨆 menus/comandos',
 }
 
 const defaultMenu = {
