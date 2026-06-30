@@ -1,158 +1,204 @@
-const COLORES = ['🔴', '🔵', '🟢', '🟡']
-const sesiones = {}
-const RECOMPENSA_BASE = 30
+import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys'
 
-const handler = async (m, { conn }) => {
-  if (sesiones[m.chat]) return m.reply([
-    `╔══〔 🌼 *THEELY-MD — SIMON DICE* 〕══╗`,
+const COLORES = ['🔴', '🔵', '🟢', '🟡']
+
+function crearMensaje(chat, text, userId, m) {
+  const rows = COLORES.map((c, i) => ({
+    title: `${c} Color ${i + 1}`,
+    id: `simon_${i}_${userId}`
+  }))
+
+  const buttons = [{
+    name: 'single_select',
+    buttonParamsJson: JSON.stringify({
+      title: '🎵 SIGUIENTE COLOR',
+      sections: [{ title: '🎨 Elige el color', rows }]
+    })
+  }]
+
+  return generateWAMessageFromContent(chat, {
+    viewOnceMessage: {
+      message: {
+        messageContextInfo: {},
+        interactiveMessage: proto.Message.InteractiveMessage.create({
+          header: {
+            title: '🌼 THEELY-MD — SIMON DICE',
+            subtitle: 'Repite la secuencia',
+            hasMediaAttachment: false
+          },
+          body: { text },
+          footer: { text: '🎮 Powered by TheEly-MD 🌼' },
+          nativeFlowMessage: { buttons }
+        })
+      }
+    }
+  }, { quoted: m })
+}
+
+let handler = async (m, { conn }) => {
+  global.simon = global.simon || {}
+
+  if (global.simon[m.sender]) return m.reply([
+    `╔══〔 🌼 *SIMON DICE* 〕══╗`,
     `║`,
-    `║ ⚠️ Ya hay un juego activo~`,
-    `║ Usa *.repetir <secuencia>*`,
+    `║ ⚠️ Ya tienes un juego activo~`,
     `║`,
     `╚══════════════════════════════════╝`
   ].join('\n'))
 
-  const secuencia = [COLORES[Math.floor(Math.random() * 4)]]
+  const secuencia = [Math.floor(Math.random() * 4)]
 
-  sesiones[m.chat] = {
+  global.simon[m.sender] = {
     secuencia,
-    nivel: 1,
-    jugador: m.sender,
-    tiempo: setTimeout(() => {
-      if (sesiones[m.chat]) {
-        conn.sendMessage(m.chat, { text: `⏰ Simon Dice cancelado por inactividad~` })
-        delete sesiones[m.chat]
-      }
-    }, 60000)
+    progreso: [],
+    nivel: 1
   }
 
   await m.react('🎵')
-  await conn.sendMessage(m.chat, {
-    text: [
-      `╔══〔 🌼 *THEELY-MD — SIMON DICE* 〕══╗`,
-      `║`,
-      `║ 🎵 *¡Memoriza la secuencia!*`,
-      `║`,
-      `║ ${secuencia.join(' ')}`,
-      `║`,
-      `║ ⏰ Tienes 15 segundos~`,
-      `║ 💡 Responde con *.repetir* y los`,
-      `║ emojis en orden (separados por`,
-      `║ espacio)`,
-      `║`,
-      `╚══════════════════════════════════╝`
-    ].join('\n')
-  }, { quoted: m })
 
-  setTimeout(async () => {
-    if (sesiones[m.chat] && sesiones[m.chat].nivel === 1) {
-      await conn.sendMessage(m.chat, {
-        text: `╔══〔 🌼 *THEELY-MD* 〕══╗\n║\n║ 👀 *¡Secuencia oculta!*\n║ Responde ahora~\n║\n╚══════════════════════╝`
-      })
-    }
-  }, 5000)
+  const secuenciaVisual = secuencia.map(i => COLORES[i]).join(' ')
+
+  const text = [
+    `╔══〔 🌼 *SIMON DICE* 〕══╗`,
+    `║`,
+    `║ 🎵 *Nivel 1*`,
+    `║`,
+    `║ Secuencia: ${secuenciaVisual}`,
+    `║`,
+    `║ 👇 *Elige el primer color~*`,
+    `║`,
+    `╚══════════════════════════════════╝`
+  ].join('\n')
+
+  const msg = crearMensaje(m.chat, text, m.sender, m)
+  await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
 }
 
-handler.before = async (m, { conn, command, text }) => {
-  if (command !== 'repetir' || !sesiones[m.chat]) return false
+handler.before = async (m, { conn }) => {
+  const nativeFlow = m.message?.interactiveResponseMessage?.nativeFlowResponseMessage
+  if (!nativeFlow) return
 
-  const sesion = sesiones[m.chat]
-  const moneda = global.moneda || 'coins'
+  try {
+    const data = JSON.parse(nativeFlow.paramsJson || '{}')
+    const id = data.id
+    if (!id?.startsWith('simon_')) return
 
-  if (m.sender !== sesion.jugador) {
-    await m.reply(`⚠️ No es tu juego, espera tu turno~`)
-    return true
-  }
-
-  const respuesta = text.trim().split(' ').filter(Boolean)
-  const correcta  = JSON.stringify(respuesta) === JSON.stringify(sesion.secuencia)
-
-  if (correcta) {
-    clearTimeout(sesion.tiempo)
-    sesion.nivel++
-    sesion.secuencia.push(COLORES[Math.floor(Math.random() * 4)])
-
-    if (sesion.nivel > 8) {
-      // ── GANÓ EL JUEGO COMPLETO ──
-      const recompensa = RECOMPENSA_BASE * sesion.nivel
-      if (!global.db.data.users[m.sender]) global.db.data.users[m.sender] = { coin: 0 }
-      global.db.data.users[m.sender].coin = (global.db.data.users[m.sender].coin || 0) + recompensa
-      await global.db.write()
-
-      await m.react('🏆')
+    const [, colorIdx, userId] = id.split('_')
+    const game = global.simon?.[userId]
+    if (!game) {
       await conn.sendMessage(m.chat, {
-        text: [
-          `╔══〔 🌼 *THEELY-MD — SIMON DICE* 〕══╗`,
-          `║`,
-          `║ 🏆 *¡PERFECTO! Completaste*`,
-          `║ *todos los niveles!*`,
-          `║`,
-          `║ 💰 *+${recompensa}* ${moneda}`,
-          `║`,
-          `╚══════════════════════════════════╝`
-        ].join('\n')
+        text: `╔══〔 🌼 *SIMON DICE* 〕══╗\n║\n║ ❌ No hay juego activo~\n║ 💡 Usa *.simondice* para empezar\n║\n╚══════════════════════════════════╝`
       }, { quoted: m })
-
-      delete sesiones[m.chat]
       return true
     }
 
-    sesion.tiempo = setTimeout(() => {
-      if (sesiones[m.chat]) {
-        conn.sendMessage(m.chat, { text: `⏰ Simon Dice cancelado por inactividad~` })
-        delete sesiones[m.chat]
+    const moneda = global.moneda || 'coins'
+    const elegido = parseInt(colorIdx)
+    game.progreso.push(elegido)
+
+    const indiceActual = game.progreso.length - 1
+    const correcto = game.progreso[indiceActual] === game.secuencia[indiceActual]
+
+    if (!correcto) {
+      const recompensa = Math.max(0, (game.nivel - 1) * 30)
+
+      if (recompensa > 0) {
+        if (!global.db.data.users[userId]) global.db.data.users[userId] = { coin: 0 }
+        global.db.data.users[userId].coin = (global.db.data.users[userId].coin || 0) + recompensa
+        await global.db.write()
       }
-    }, 60000)
 
-    await m.react('✅')
-    await conn.sendMessage(m.chat, {
-      text: [
-        `╔══〔 🌼 *THEELY-MD — SIMON DICE* 〕══╗`,
-        `║`,
-        `║ ✅ *¡Correcto! Nivel ${sesion.nivel}*`,
-        `║`,
-        `║ ${sesion.secuencia.join(' ')}`,
-        `║`,
-        `║ ⏰ 15 segundos para memorizar~`,
-        `║`,
-        `╚══════════════════════════════════╝`
-      ].join('\n')
-    }, { quoted: m })
-
-  } else {
-    clearTimeout(sesion.tiempo)
-    const recompensa = RECOMPENSA_BASE * (sesion.nivel - 1)
-
-    if (recompensa > 0) {
-      if (!global.db.data.users[m.sender]) global.db.data.users[m.sender] = { coin: 0 }
-      global.db.data.users[m.sender].coin = (global.db.data.users[m.sender].coin || 0) + recompensa
-      await global.db.write()
-    }
-
-    await m.react('❌')
-    await conn.sendMessage(m.chat, {
-      text: [
-        `╔══〔 🌼 *THEELY-MD — SIMON DICE* 〕══╗`,
+      const text = [
+        `╔══〔 🌼 *SIMON DICE* 〕══╗`,
         `║`,
         `║ ❌ *¡Incorrecto!*`,
-        `║ Llegaste al nivel ${sesion.nivel}`,
+        `║ Llegaste al nivel ${game.nivel}`,
         `║`,
         recompensa > 0 ? `║ 💰 *+${recompensa}* ${moneda} de consuelo` : '',
         `║`,
         `╚══════════════════════════════════╝`
       ].filter(Boolean).join('\n')
-    }, { quoted: m })
 
-    delete sesiones[m.chat]
+      delete global.simon[userId]
+      await conn.sendMessage(m.chat, { text }, { quoted: m })
+      await m.react('❌')
+      return true
+    }
+
+    if (game.progreso.length === game.secuencia.length) {
+      // ── Completó el nivel actual ──
+      if (game.nivel >= 8) {
+        const recompensa = 30 * game.nivel
+
+        if (!global.db.data.users[userId]) global.db.data.users[userId] = { coin: 0 }
+        global.db.data.users[userId].coin = (global.db.data.users[userId].coin || 0) + recompensa
+        await global.db.write()
+
+        const text = [
+          `╔══〔 🌼 *SIMON DICE* 〕══╗`,
+          `║`,
+          `║ 🏆 *¡PERFECTO!*`,
+          `║ Completaste todos los niveles~`,
+          `║`,
+          `║ 💰 *+${recompensa}* ${moneda}`,
+          `║`,
+          `╚══════════════════════════════════╝`
+        ].join('\n')
+
+        delete global.simon[userId]
+        await conn.sendMessage(m.chat, { text }, { quoted: m })
+        await m.react('🏆')
+        return true
+      }
+
+      game.nivel++
+      game.secuencia.push(Math.floor(Math.random() * 4))
+      game.progreso = []
+
+      const secuenciaVisual = game.secuencia.map(i => COLORES[i]).join(' ')
+
+      const text = [
+        `╔══〔 🌼 *SIMON DICE* 〕══╗`,
+        `║`,
+        `║ ✅ *¡Correcto! Nivel ${game.nivel}*`,
+        `║`,
+        `║ Secuencia: ${secuenciaVisual}`,
+        `║`,
+        `║ 👇 *Elige el primer color~*`,
+        `║`,
+        `╚══════════════════════════════════╝`
+      ].join('\n')
+
+      await m.react('✅')
+      const msg = crearMensaje(m.chat, text, userId, m)
+      await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
+      return true
+    }
+
+    // ── Sigue dentro de la secuencia actual, falta más ──
+    const text = [
+      `╔══〔 🌼 *SIMON DICE* 〕══╗`,
+      `║`,
+      `║ ✅ *Correcto~* (${game.progreso.length}/${game.secuencia.length})`,
+      `║`,
+      `║ 👇 *Continúa la secuencia~*`,
+      `║`,
+      `╚══════════════════════════════════╝`
+    ].join('\n')
+
+    await m.react('✅')
+    const msg = crearMensaje(m.chat, text, userId, m)
+    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
+    return true
+
+  } catch (e) {
+    console.error('❌ Error en simon:', e.message)
   }
-
-  return true
 }
 
-handler.help    = ['simondice', 'repetir <secuencia>']
+handler.command = ['simondice', 'simon']
 handler.tags    = ['game']
-handler.command = ['simondice', 'simon', 'repetir']
-handler.register = true
+handler.help    = ['simondice']
 handler.desc    = 'Juega Simon Dice y gana ElyCoins'
 
 export default handler
