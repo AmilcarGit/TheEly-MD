@@ -15,7 +15,7 @@ const RAREZAS = {
   ely_especial: { nombre: 'Ely Especial', emoji: '🌼', prob: 0.1  },
 }
 
-const COSTO_TIRADA = 100
+const COSTO_TIRADA = 0
 const COOLDOWN     = 5 * 60 * 1000
 
 function tirarGacha() {
@@ -89,26 +89,15 @@ const handler = async (m, { conn, args }) => {
       `║ 🕐 *Disponible en:*`,
       `║ ${String(min).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`,
       `║`,
-      `║ 💡 *.gacha 10* sin cooldown`,
-      `║ (cuesta ${COSTO_TIRADA * 10} ${moneda})`,
+      `║ 💡 *.gacha 10* para 10 tiradas`,
+      `║ sin cooldown~`,
       `║`,
       `╚══════════════════════════════════╝`
     ].join('\n'))
   }
 
-  if ((user.coin || 0) < costoTotal) return m.reply([
-    `╔══〔 🌼 *THEELY-MD — GACHA* 〕══╗`,
-    `║`,
-    `║ ❌ *Saldo insuficiente~*`,
-    `║ 💰 Necesitas: ${costoTotal} ${moneda}`,
-    `║ 👛 Tienes: ${user.coin || 0} ${moneda}`,
-    `║`,
-    `╚══════════════════════════════════╝`
-  ].join('\n'))
-
   await m.react('🎴')
 
-  global.db.data.users[m.sender].coin -= costoTotal
   if (cantidad === 1) global.db.data.users[m.sender].lastgacha = ahora
 
   if (!global.db.data.users[m.sender].coleccion) global.db.data.users[m.sender].coleccion = []
@@ -146,7 +135,6 @@ const handler = async (m, { conn, args }) => {
       `║ ${t.personaje.emoji} *${t.personaje.nombre}*`,
       `║ 📺 ${t.personaje.origen}`,
       `║`,
-      `║ 👛 *Saldo:* ${global.db.data.users[m.sender].coin} ${moneda}`,
       `║`,
       `╚══════════════════════════════════╝`
     ].join('\n')
@@ -178,7 +166,6 @@ const handler = async (m, { conn, args }) => {
       `║ ⭐ *Mejor obtenido:*`,
       `║ ${mejorTirada.emoji} ${mejorTirada.personaje.nombre}`,
       `║`,
-      `║ 👛 *Saldo:* ${global.db.data.users[m.sender].coin} ${moneda}`,
       `║`,
       `╚══════════════════════════════════╝`
     ].join('\n')
