@@ -36,13 +36,32 @@ function tirarGacha() {
 // ── Buscar imagen del personaje (Bing image search sin API key) ──
 async function buscarImagen(nombrePersonaje, origen) {
   try {
-    const query = encodeURIComponent(`${nombrePersonaje} ${origen} anime`)
-    const res = await fetch(`https://www.bing.com/images/search?q=${query}&form=HDRSC2`, {
+    // Limpiar nombre (quitar paréntesis, símbolos raros, emojis)
+    const nombreLimpio = nombrePersonaje
+      .replace(/\(.*?\)/g, '')
+      .replace(/[^\p{L}\p{N}\s]/gu, '')
+      .trim()
+
+    const query = encodeURIComponent(`${nombreLimpio} ${origen} official art character`)
+    const res = await fetch(`https://www.bing.com/images/search?q=${query}&form=HDRSC2&first=1`, {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
     })
     const html = await res.text()
-    const match = html.match(/murl&quot;:&quot;(https:\/\/[^&]+\.(?:jpg|jpeg|png|webp))/i)
-    if (match && match[1]) return match[1]
+
+    // Extraer varias coincidencias y tomar la primera válida
+    const matches = [...html.matchAll(/murl&quot;:&quot;(https:\/\/[^&]+\.(?:jpg|jpeg|png|webp))/gi)]
+
+    for (const match of matches.slice(0, 5)) {
+      const url = match[1]
+      // Validar que la imagen realmente carga
+      try {
+        const check = await fetch(url, { method: 'HEAD', timeout: 5000 })
+        if (check.ok && check.headers.get('content-type')?.startsWith('image/')) {
+          return url
+        }
+      } catch {}
+    }
+
     return null
   } catch {
     return null
