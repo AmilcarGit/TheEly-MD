@@ -2,8 +2,7 @@ import fs from 'fs'
 import { join } from 'path'
 
 const tags = {
-  premium:      '𓅖 Premium𓅓',
-  jadibot:      '☘︎ Sub-Bots⚘', 
+  premium:      '𓅖 Premium𓅓', 
   tools:        '☢︎ Herramientas♯',
   game:         '𝄞 Juegos',
   reacciones:   '𖣐 Reacciones𖦃',
