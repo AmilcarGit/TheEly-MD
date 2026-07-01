@@ -59,7 +59,8 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   📌 Usa los comandos con responsabilidad.
 
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸 𓉳
+  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸𓉳
+    🇧 🇺 🇸 🇨 🇦 🇩 🇴 🇷 🇪 🇸 
     ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
 `
 
