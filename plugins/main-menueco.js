@@ -111,9 +111,9 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
-handler.command = ['menueco', 'economia', 'eco', 'menuconomia']
+handler.command = ['menu2', 'economia', 'eco', 'menuconomia']
 handler.tags = ['main']
-handler.help = ['menueco']
+handler.help = ['menu2']
 handler.desc = 'Muestra el menú de economía del bot'
 handler.register = true
 handler.limit = false
