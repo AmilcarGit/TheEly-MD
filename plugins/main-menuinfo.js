@@ -60,7 +60,8 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   👥 Usuarios registrados: ${Object.keys(global.db.data.users || {}).length}
 
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸 𓉳
+  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸𓉳
+ 🇮 🇳 🇫 🇴 🇷 🇲 🇦 🇨 🇮 🇴 🇳 
     ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
 `
 
