@@ -106,9 +106,9 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
-handler.command = ['menusub', 'subbot', 'sub-bot', 'jadibot']
+handler.command = ['menu9', 'subbot', 'sub-bot', 'jadibot']
 handler.tags = ['main']
-handler.help = ['menusub']
+handler.help = ['menu9']
 handler.desc = 'Muestra el menú de sub-bots del bot'
 handler.register = false
 handler.limit = false
