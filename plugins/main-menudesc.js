@@ -109,7 +109,7 @@ handler.command = ['menudesc', 'descargas', 'downloads']
 handler.tags = ['main']
 handler.help = ['menudesc']
 handler.desc = 'Muestra el menú de descargas del bot'
-handler.register = true
+handler.register = false
 handler.limit = false
 
 export default handler
