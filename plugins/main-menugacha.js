@@ -62,7 +62,8 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ✨ Experiencia: ${userExp}
 
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸 𓉳
+  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸𓉳
+       🇬 🇦 🇨 🇭 🇦 
     ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
 `
 
@@ -110,9 +111,9 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
-handler.command = ['menugacha', 'gachamenu', 'gacha']
+handler.command = ['menu4', 'gachamenu', 'gacha']
 handler.tags = ['main']
-handler.help = ['menugacha']
+handler.help = ['menu4']
 handler.desc = 'Muestra el menú del sistema gacha del bot'
 handler.register = false  // el menú en sí no requiere registro
 handler.limit = false
