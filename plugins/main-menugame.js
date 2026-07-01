@@ -108,9 +108,9 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
-handler.command = ['menugame', 'juegos', 'game', 'games']
+handler.command = ['menu5', 'juegos', 'game', 'games']
 handler.tags = ['main']
-handler.help = ['menugame']
+handler.help = ['menu5']
 handler.desc = 'Muestra el menú de juegos del bot'
 handler.register = false
 handler.limit = false
