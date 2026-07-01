@@ -112,9 +112,9 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
-handler.command = ['menuestudio', 'estudio', 'escuela']
+handler.command = ['menu3', 'estudio', 'escuela']
 handler.tags = ['main']
-handler.help = ['menuestudio']
+handler.help = ['menu3']
 handler.desc = 'Muestra el menú de herramientas de estudio del bot'
 handler.register = false
 handler.limit = false
