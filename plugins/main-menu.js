@@ -3,10 +3,7 @@ import { join } from 'path'
 
 const tags = {
   premium:      '𓅖 Premium𓅓',
-  jadibot:      '☘︎ Sub-Bots⚘',
-  descargas:    '✎ Descargas☔︎︎', 
-  grupo:        '♨︎ Grupos☠︎',
-  eco:          '☎︎ RPG/Economía☣︎',
+  jadibot:      '☘︎ Sub-Bots⚘', 
   tools:        '☢︎ Herramientas♯',
   game:         '𝄞 Juegos',
   reacciones:   '𖣐 Reacciones𖦃',
