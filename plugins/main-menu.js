@@ -10,7 +10,6 @@ const tags = {
   tools:        '☢︎ Herramientas♯',
   game:         '𝄞 Juegos',
   reacciones:   '𖣐 Reacciones𖦃',
-  estudio:      '🂽 Escuela🃁', 
   sticker:      '𖥸 Stickers𖧶',
   ia:           '♞ 𝐈𝐀♔',
   fun:          '𓅋 Diversión𓅍',
