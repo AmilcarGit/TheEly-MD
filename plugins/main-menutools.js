@@ -106,9 +106,9 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
-handler.command = ['menutools', 'tools', 'herramientas']
+handler.command = ['menu10', 'tools', 'herramientas']
 handler.tags = ['main']
-handler.help = ['menutools']
+handler.help = ['menu10']
 handler.desc = 'Muestra el menú de herramientas del bot'
 handler.register = true
 handler.limit = false
