@@ -175,8 +175,8 @@ handler.before = async (m, { conn }) => {
     const cmdName = id.slice(1)
     const plugins = getPluginsCache()
     const plugin = plugins.find(p => {
-      if (p.command) {
-        const cmds = Array.isArray(p.command) ? p.command : [p.command]
+      if (p.handler && p.handler.command) {
+        const cmds = Array.isArray(p.handler.command) ? p.handler.command : [p.handler.command]
         return cmds.includes(cmdName)
       }
       return false
