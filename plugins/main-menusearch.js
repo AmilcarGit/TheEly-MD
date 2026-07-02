@@ -112,7 +112,7 @@ handler.command = ['menu8', 'buscador', 'search']
 handler.tags = ['main']
 handler.help = ['menu8']
 handler.desc = 'Muestra el menú de buscadores y descargas del bot'
-handler.register = true
+handler.register = false
 handler.limit = false
 
 export default handler
