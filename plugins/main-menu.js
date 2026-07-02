@@ -75,37 +75,30 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
 
   𓏲📂 *C A T E G O R Í A S* 𓉳
 
-  🎮 .menugame     → Juegos
-  🧠 .menuia       → Inteligencia Artificial
-  🎨 .menufun      → Diversión
-  🂽 .menuestudio  → Estudio / Escuela
-  𖡹 .menugacha    → Gacha
-  💰 .menueco      → Economía
-  ✎ .menudesc      → Descargas
-  ♨️ .menugrupo    → Grupos / Admin
-  ☕ .menucreador  → Owner / Creador
-  𖥸 .menusticker  → Stickers
-  ☯️ .menusearch   → Buscadores
-
-  💡 *Selecciona una opción abajo* ⬇️
+  📌 *Selecciona una opción en el menú desplegable.*
+  💡 *Los comandos también funcionan escribiéndolos.*
 
   ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
     `.trim()
 
     // ========== BOTONES INTERACTIVOS ==========
     const rows = [
-      { title: '🎮 Juegos', id: `${_p}menugame` },
-      { title: '🧠 Inteligencia Artificial', id: `${_p}menuia` },
-      { title: '🎨 Diversión', id: `${_p}menufun` },
-      { title: '🂽 Estudio / Escuela', id: `${_p}menuestudio` },
-      { title: '𖡹 Gacha', id: `${_p}menugacha` },
-      { title: '💰 Economía', id: `${_p}menueco` },
-      { title: '✎ Descargas', id: `${_p}menudesc` },
-      { title: '♨️ Grupos / Admin', id: `${_p}menugrupo` },
-      { title: '☕ Owner / Creador', id: `${_p}menucreador` },
-      { title: '𖥸 Stickers', id: `${_p}menusticker` },
-      { title: '☯️ Buscadores', id: `${_p}menusearch` },
-      { title: '🌼 Menú Principal', id: `${_p}menu` }
+      { title: '🎮 Juegos', id: '.menu5' },
+      { title: '🧠 Inteligencia Artificial', id: '.menua' },
+      { title: '🎨 Diversión', id: '.menufun' },
+      { title: '🂽 Estudio / Escuela', id: '.menu3' },
+      { title: '𖡹 Gacha', id: '.menu4' },
+      { title: '💰 Economía', id: '.menu2' },
+      { title: '✎ Descargas', id: '.menu1' },
+      { title: '♨️ Grupos / Admin', id: '.menu6' },
+      { title: '☕ Owner / Creador', id: '.menucreador' },
+      { title: '𖥸 Stickers', id: '.menusticker' },
+      { title: '☯️ Buscadores', id: '.menu8' },
+      { title: '📊 Información', id: '.menu7' },
+      { title: '☘️ Sub-Bots', id: '.menu9' },
+      { title: '☢️ Herramientas', id: '.menu10' },
+      { title: '꒷ Multijugador', id: '.multiplayer' },
+      { title: '🌼 Menú Principal', id: '.menu' }
     ]
 
     const buttonsMessage = {
@@ -116,7 +109,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
             header: {
               title: '🌼 THEELY-MD — MENÚ',
               subtitle: 'Selecciona una categoría',
-              hasMediaAttachment: !!bannerFinal
+              hasMediaAttachment: false
             },
             body: { text: texto },
             footer: { text: '𝚃𝙷𝙴𝙴𝙻𝚈-𝙼𝙳  ·  𝙲𝚘𝚖𝚊𝚗𝚍𝚘𝚜 𝙾𝚏𝚒𝚌𝚒𝚊𝚕𝚎𝚜' },
@@ -137,15 +130,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
       }
     }
 
-    // Si hay imagen, la añadimos al header
-    if (bannerFinal) {
-      // Nota: Para imágenes en header necesitas subirlas como attachment
-      // Por simplicidad, se omite la imagen en el header interactivo
-      // Pero se puede enviar por separado como imagen + caption
-      // Mejor enviamos solo texto con botones
-      delete buttonsMessage.viewOnceMessage.message.interactiveMessage.header.hasMediaAttachment
-    }
-
     const msg = generateWAMessageFromContent(m.chat, buttonsMessage, { quoted: m })
     await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
     await m.react('🌼')
@@ -153,6 +137,51 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   } catch (e) {
     console.error('💥 Error en menú principal:', e)
     await conn.reply(m.chat, `❌ Ocurrió un error al cargar el menú principal.`, m)
+  }
+}
+
+// ========== MANEJADOR DE RESPUESTAS DE BOTONES ==========
+handler.before = async (m, { conn }) => {
+  const flow = m.message?.interactiveResponseMessage?.nativeFlowResponseMessage
+  if (!flow) return
+
+  try {
+    const data = JSON.parse(flow.paramsJson || '{}')
+    const id = data.id
+    if (!id) return
+
+    // Verificar que sea un comando de menú (opcional)
+    // Si el id empieza con '.', lo procesamos
+    if (id.startsWith('.')) {
+      // Simular que el usuario escribió el comando
+      // Para evitar bucles, no procesamos si el mensaje es de nosotros mismos
+      // Pero como es una interacción, no es un mensaje de texto normal
+      // Usamos conn.ev.emit para inyectar un mensaje falso
+      const fakeMessage = {
+        key: {
+          remoteJid: m.chat,
+          fromMe: false,
+          id: 'fake-' + Date.now()
+        },
+        message: {
+          conversation: id
+        },
+        pushName: 'Usuario',
+        sender: m.sender
+      }
+
+      // Emitir el mensaje para que el bot lo procese
+      conn.ev.emit('messages.upsert', {
+        messages: [fakeMessage],
+        type: 'notify'
+      })
+
+      // También podemos responder con un mensaje de confirmación opcional
+      // await conn.sendMessage(m.chat, { text: `⏳ Ejecutando ${id}...` }, { quoted: m })
+      return true
+    }
+  } catch (e) {
+    console.error('❌ Error procesando botón del menú:', e)
   }
 }
 
