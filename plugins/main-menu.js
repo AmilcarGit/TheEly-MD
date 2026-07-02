@@ -3,13 +3,14 @@ import { join } from 'path'
 import { generateWAMessageFromContent, proto, prepareWAMessageMedia } from '@whiskeysockets/baileys'
 
 let pluginsCache = null
-let lastUpdate = 0
+let lastCacheUpdate = 0
 
 function getPluginsCache() {
   const now = Date.now()
-  if (!pluginsCache || now - lastUpdate > 30000) {
-    pluginsCache = Object.values(global.plugins || {})
-    lastUpdate = now
+  if (!pluginsCache || now - lastCacheUpdate > 5000) {
+    const raw = global.plugins || {}
+    pluginsCache = Object.values(raw)
+    lastCacheUpdate = now
   }
   return pluginsCache
 }
@@ -174,10 +175,15 @@ handler.before = async (m, { conn }) => {
 
     const cmdName = id.slice(1)
     const plugins = getPluginsCache()
+
     const plugin = plugins.find(p => {
       if (p.handler && p.handler.command) {
         const cmds = Array.isArray(p.handler.command) ? p.handler.command : [p.handler.command]
-        return cmds.includes(cmdName)
+        if (cmds.includes(cmdName)) return true
+      }
+      if (p.command) {
+        const cmds = Array.isArray(p.command) ? p.command : [p.command]
+        if (cmds.includes(cmdName)) return true
       }
       return false
     })
