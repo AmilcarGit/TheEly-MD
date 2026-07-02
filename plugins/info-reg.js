@@ -89,7 +89,6 @@ handler.help     = ['reg <nombre>.<edad>']
 handler.tags     = ['info']
 handler.command  = ['reg', 'register', 'registrar']
 handler.register = false
-user. registrado = true
 handler.desc     = 'Registra tu perfil en TheEly-MD'
 
 export default handler
