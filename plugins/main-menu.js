@@ -96,7 +96,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     `.trim()
 
     const rows = [
-      { title: '🎮 Juegos', id: '.menu5' },
+      { title: '🎮 𝗝𝘂𝗲𝗴𝗼𝘀', id: '.menu5' },
       { title: '🧠 Inteligencia Artificial', id: '.menua' },
       { title: '🎨 Diversión', id: '.menufun' },
       { title: '🂽 Estudio / Escuela', id: '.menu3' },
