@@ -111,9 +111,9 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
-handler.command = ['menuia', 'ia', 'inteligencia']
+handler.command = ['menu ia', 'ia', 'inteligencia']
 handler.tags = ['main']
-handler.help = ['menuia']
+handler.help = ['menu ia']
 handler.desc = 'Muestra el menú de comandos de inteligencia artificial del bot'
 handler.register = false
 handler.limit = false
