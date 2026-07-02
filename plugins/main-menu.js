@@ -24,7 +24,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     let nombreBot = 'TheEly MD'
     let bannerBuffer = null
 
-    // Buscar la imagen del banner
     const imagePath = join(process.cwd(), 'lib', 'TheElyMD.jpg')
     if (fs.existsSync(imagePath)) {
       bannerBuffer = fs.readFileSync(imagePath)
@@ -166,25 +165,50 @@ handler.before = async (m, { conn }) => {
     const id = data.id
     if (!id) return
 
+    // Verificar que sea un comando de menú
     if (id.startsWith('.')) {
-      const fakeMessage = {
-        key: {
-          remoteJid: m.chat,
-          fromMe: false,
-          id: 'fake-' + Date.now()
-        },
-        message: {
-          conversation: id
-        },
-        pushName: 'Usuario',
-        sender: m.sender
-      }
+      // Buscar el plugin que maneja este comando
+      const cmdName = id.slice(1) // quitar el punto
+      const plugin = global.plugins ? Object.values(global.plugins).find(p => {
+        if (p.command) {
+          const cmds = Array.isArray(p.command) ? p.command : [p.command]
+          return cmds.includes(cmdName)
+        }
+        return false
+      }) : null
 
-      conn.ev.emit('messages.upsert', {
-        messages: [fakeMessage],
-        type: 'notify'
-      })
-      return true
+      if (plugin && typeof plugin.handler === 'function') {
+        // Ejecutar el comando directamente
+        // Crear un objeto de mensaje simulado para que el handler lo use
+        const fakeM = {
+          ...m,
+          text: id,
+          body: id,
+          quoted: m.quoted || null
+        }
+        // Llamar al handler con los parámetros correctos
+        await plugin.handler(fakeM, { conn, text: cmdName, usedPrefix: '.', command: cmdName })
+        return true
+      } else {
+        // Si no se encuentra el plugin, intentar inyectar mensaje falso (fallback)
+        const fakeMessage = {
+          key: {
+            remoteJid: m.chat,
+            fromMe: false,
+            id: 'fake-' + Date.now()
+          },
+          message: {
+            conversation: id
+          },
+          pushName: 'Usuario',
+          sender: m.sender
+        }
+        conn.ev.emit('messages.upsert', {
+          messages: [fakeMessage],
+          type: 'notify'
+        })
+        return true
+      }
     }
   } catch (e) {
     console.error('❌ Error procesando botón del menú:', e)
