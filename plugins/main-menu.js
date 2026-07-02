@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { join } from 'path'
-import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys'
+import { generateWAMessageFromContent, proto, prepareWAMessageMedia } from '@whiskeysockets/baileys'
 
 const handler = async (m, { conn, usedPrefix: _p }) => {
   try {
@@ -22,14 +22,15 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     })
 
     let nombreBot = 'TheEly MD'
-    let bannerFinal = null
+    let bannerBuffer = null
 
+    // Buscar la imagen del banner
     const imagePath = join(process.cwd(), 'lib', 'TheElyMD.jpg')
     if (fs.existsSync(imagePath)) {
-      bannerFinal = fs.readFileSync(imagePath)
+      bannerBuffer = fs.readFileSync(imagePath)
     } else {
       const rootPath = join(process.cwd(), 'TheElyMD.jpg')
-      if (fs.existsSync(rootPath)) bannerFinal = fs.readFileSync(rootPath)
+      if (fs.existsSync(rootPath)) bannerBuffer = fs.readFileSync(rootPath)
     }
 
     const botActual = conn.user?.jid?.split('@')[0].replace(/\D/g, '')
@@ -101,15 +102,30 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
       { title: '🌼 Menú Principal', id: '.menu' }
     ]
 
+    // ========== PREPARAR IMAGEN PARA EL HEADER ==========
+    let imageMessage = null
+    if (bannerBuffer) {
+      try {
+        const media = await prepareWAMessageMedia(
+          { image: bannerBuffer },
+          { upload: conn.waUploadToServer }
+        )
+        imageMessage = media.imageMessage
+      } catch (e) {
+        console.error('❌ Error preparando imagen:', e)
+      }
+    }
+
     const buttonsMessage = {
       viewOnceMessage: {
         message: {
           messageContextInfo: {},
           interactiveMessage: proto.Message.InteractiveMessage.create({
             header: {
-              title: '🌼 THEELY-MD — MENÚ',
-              subtitle: 'Selecciona una categoría',
-              hasMediaAttachment: false
+              title: '🌼 THEELY-MD',
+              subtitle: 'Menú Principal',
+              hasMediaAttachment: !!imageMessage,
+              ...(imageMessage && { imageMessage })
             },
             body: { text: texto },
             footer: { text: '𝚃𝙷𝙴𝙴𝙻𝚈-𝙼𝙳  ·  𝙲𝚘𝚖𝚊𝚗𝚍𝚘𝚜 𝙾𝚏𝚒𝚌𝚒𝚊𝚕𝚎𝚜' },
@@ -150,13 +166,7 @@ handler.before = async (m, { conn }) => {
     const id = data.id
     if (!id) return
 
-    // Verificar que sea un comando de menú (opcional)
-    // Si el id empieza con '.', lo procesamos
     if (id.startsWith('.')) {
-      // Simular que el usuario escribió el comando
-      // Para evitar bucles, no procesamos si el mensaje es de nosotros mismos
-      // Pero como es una interacción, no es un mensaje de texto normal
-      // Usamos conn.ev.emit para inyectar un mensaje falso
       const fakeMessage = {
         key: {
           remoteJid: m.chat,
@@ -170,14 +180,10 @@ handler.before = async (m, { conn }) => {
         sender: m.sender
       }
 
-      // Emitir el mensaje para que el bot lo procese
       conn.ev.emit('messages.upsert', {
         messages: [fakeMessage],
         type: 'notify'
       })
-
-      // También podemos responder con un mensaje de confirmación opcional
-      // await conn.sendMessage(m.chat, { text: `⏳ Ejecutando ${id}...` }, { quoted: m })
       return true
     }
   } catch (e) {
