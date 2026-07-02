@@ -3,6 +3,8 @@
 # 🤖 TheEly‑MD
 **Bot de WhatsApp Multi‑Dispositivo ligero, modular y fácil de extender**
 
+<a href='https://postimg.cc/9zcvp8wH' target='_blank'><img src='https://i.postimg.cc/y6Rs72Vx/IMG-20260630-WA0019.png' border='0' alt='IMG-20260630-WA0019'></a>
+
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-green?logo=nodedotjs&style=for-the-badge)](https://nodejs.org/)
 [![Baileys](https://img.shields.io/badge/Baileys-Latest-blue?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
 [![GitHub](https://img.shields.io/badge/GitHub-Repositorio-black?logo=github&style=for-the-badge)](https://github.com/AmilcarGit/TheEly-MD)
