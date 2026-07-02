@@ -8,7 +8,7 @@ import {
 } from '@whiskeysockets/baileys'
 
 const API_KEY  = 'EdwardwEqIgrqU'
-const BASE_API = 'https://dv-edward-api.onrender.com/dash'
+const BASE_API = 'https://dv-edward-api.onrender.com/api/download/ytaudio?url'
 let pendientes = {}
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
