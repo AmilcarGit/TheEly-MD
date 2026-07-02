@@ -3,12 +3,12 @@ import fs from 'fs'
 import path from 'path'
 import {
   generateWAMessageFromContent,
-  prepareWAMessageMedia,
   proto
 } from '@whiskeysockets/baileys'
 
 const API_KEY  = 'EdwardwEqIgrqU'
-const BASE_API = 'https://dv-edward-api.onrender.com/api/download/ytaudio?url'
+const BASE_API = 'https://dv-edward-api.onrender.com'
+
 let pendientes = {}
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
@@ -39,21 +39,12 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     }, { quoted: m })
 
     const searchUrl = `${BASE_API}/api/search/youtube?apiKey=${API_KEY}&query=${encodeURIComponent(query)}`
-    const res  = await fetch(searchUrl, {
-      headers: { 'accept': 'application/json', 'user-agent': 'Mozilla/5.0' }
-    })
+    const res  = await fetch(searchUrl)
     const json = await res.json()
 
-    if (!json.status || !Array.isArray(json.data) || json.data.length === 0) {
+    if (!json.status || !json.data?.length) {
       await m.react('❌')
-      return m.reply([
-        `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
-        `║`,
-        `║ ❌ Sin resultados para:`,
-        `║ 🔍 *${query}*`,
-        `║`,
-        `╚══════════════════════════════════╝`
-      ].join('\n'))
+      return m.reply(`❌ Sin resultados para: ${query}`)
     }
 
     const results = json.data.slice(0, 5)
@@ -62,55 +53,30 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       type: 'search',
       results: results.map(v => ({ url: v.url, title: v.title }))
     }
-    setTimeout(() => { delete pendientes[m.chat] }, 120000)
 
-    const rows = results.map((v, i) => {
-      const emojis = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣']
-      const titulo = (v.title || 'Sin título').slice(0, 35)
-      const autor  = v.author?.name || 'Desconocido'
-      const dur    = v.duration || 'N/A'
-      const vistas = Number(v.views || 0).toLocaleString()
+    setTimeout(() => delete pendientes[m.chat], 120000)
 
-      return {
-        header: emojis[i],
-        title: titulo,
-        description: `👤 ${autor} | ⏱️ ${dur} | 👀 ${vistas}`,
-        id: `play_select_${i}_${m.chat}`
-      }
-    })
+    const rows = results.map((v, i) => ({
+      header: `${i + 1}️⃣`,
+      title: (v.title || 'Sin título').slice(0, 35),
+      description: `👤 ${v.author?.name || 'Desconocido'} | ⏱️ ${v.duration || 'N/A'}`,
+      id: `play_select_${i}_${m.chat}`
+    }))
 
-    const bodyText = [
-      `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
-      `║`,
-      `║ 🔎 *Resultados para:* ${query}`,
-      `║ 🎵 *${results.length} canciones encontradas*`,
-      `║`,
-      ...results.map((v, i) => [
-        `║ ${['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣'][i]} *${(v.title||'Sin título').slice(0,40)}*`,
-        `║   👤 ${v.author?.name || 'Desconocido'}`,
-        `║   ⏱️ ${v.duration || 'N/A'}  👀 ${Number(v.views||0).toLocaleString()}`,
-        `║`
-      ]).flat(),
-      `║ 👇 *Elige y descarga directo~*`,
-      `║`,
-      `╚══════════════════════════════════╝`
-    ].join('\n')
+    const bodyText = results.map((v, i) =>
+      `• ${i + 1}. ${v.title}\n  👤 ${v.author?.name}\n  ⏱️ ${v.duration}`
+    ).join('\n\n')
 
     const interactiveMessage = proto.Message.InteractiveMessage.create({
-      header: {
-        title: '🌼 THEELY-MD — PLAY',
-        subtitle: 'Elige y descarga~',
-        hasMediaAttachment: false
-      },
       body: { text: bodyText },
-      footer: { text: '💫 Powered by TheEly-MD 🌼' },
+      footer: { text: 'THEELY-MD' },
       nativeFlowMessage: {
         buttons: [{
           name: 'single_select',
           buttonParamsJson: JSON.stringify({
-            title: '🎵 Elige una canción',
+            title: '🎵 Elegir canción',
             sections: [{
-              title: '🎶 RESULTADOS',
+              title: 'RESULTADOS',
               rows
             }]
           })
@@ -120,7 +86,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     const msg = generateWAMessageFromContent(
       m.chat,
-      { viewOnceMessage: { message: { messageContextInfo: {}, interactiveMessage } } },
+      { viewOnceMessage: { message: { interactiveMessage } } },
       { quoted: m }
     )
 
@@ -128,70 +94,44 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     await m.react('🎵')
 
   } catch (e) {
-    console.error('❌ Error en play:', e.message)
-    await m.react('❌')
-    m.reply([
-      `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
-      `║`,
-      `║ ❌ *Error al procesar~*`,
-      `║ 🔄 Intenta de nuevo`,
-      `║`,
-      `╚══════════════════════════════════╝`
-    ].join('\n'))
+    console.error(e)
+    await m.reply('❌ Error en búsqueda')
   }
 }
 
 async function procesarDescarga(m, conn, url) {
   try {
     await conn.sendMessage(m.chat, {
-      text: `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗\n║\n║ ⏳ *Descargando audio...*\n║ 💡 Esto puede tardar unos segundos~\n║\n╚══════════════════════════════════╝`
+      text: `⏳ Descargando audio...`
     }, { quoted: m })
 
     const apiUrl = `${BASE_API}/api/download/ytaudio?url=${encodeURIComponent(url)}&apiKey=${API_KEY}`
-    const res    = await fetch(apiUrl)
-    const data   = await res.json()
+    const res  = await fetch(apiUrl)
+    const data = await res.json()
 
-    if (!data.status) throw new Error(data.error || 'Error al obtener audio')
+    if (!data.status) throw new Error(data.error || 'Error API')
 
-    const { title, duration, download_url } = data.result
-    const min    = Math.floor(duration / 60)
-    const seg    = duration % 60
-    const durStr = `${min}:${String(seg).padStart(2, '0')}`
+    const result = data.result || data
 
-    const tmpDir    = path.join(process.cwd(), 'tmp')
-    if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true })
+    const title = result.title || 'audio'
 
-    const audioPath = path.join(tmpDir, `${Date.now()}.mp3`)
-    const audioRes  = await fetch(download_url)
-    fs.writeFileSync(audioPath, Buffer.from(await audioRes.arrayBuffer()))
-
+    // 🔥 ENVIAR DIRECTO SIN DESCARGAR A DISCO
     await conn.sendMessage(m.chat, {
-      audio:    fs.readFileSync(audioPath),
+      audio: { url: result.download_url || result.url },
       mimetype: 'audio/mpeg',
-      ptt:      false,
       fileName: `${title}.mp3`
     }, { quoted: m })
 
     await conn.sendMessage(m.chat, {
-      text: [
-        `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
-        `║`,
-        `║ ✅ *¡Audio enviado!*`,
-        `║ 🎵 *${title}*`,
-        `║ ⏱️ *${durStr}*`,
-        `║`,
-        `║ 💫 *Powered by TheEly-MD 🌼*`,
-        `╚══════════════════════════════════╝`
-      ].join('\n')
+      text: `✅ Audio enviado:\n🎵 ${title}`
     }, { quoted: m })
 
-    fs.unlinkSync(audioPath)
     await m.react('✅')
 
   } catch (e) {
-    console.error('❌ Error en descarga:', e.message)
+    console.error(e)
     await m.react('❌')
-    m.reply(`❌ Error al procesar el audio~\n💡 Verifica que el enlace sea válido`)
+    m.reply('❌ Error al descargar audio')
   }
 }
 
@@ -201,45 +141,32 @@ handler.before = async (m, { conn }) => {
 
   try {
     const data = JSON.parse(nativeFlow.paramsJson || '{}')
-    const id   = data.id || data.selectedId || null
-    if (!id) return false
+    const id = data.id || data.selectedId
 
-    if (id.startsWith('play_select_')) {
-      const parts  = id.split('_')
-      const index  = parseInt(parts[2])
-      const chatId = parts.slice(3).join('_')
-      const pend   = pendientes[chatId]
+    if (!id?.startsWith('play_select_')) return false
 
-      if (!pend || pend.type !== 'search') {
-        await conn.sendMessage(m.chat, {
-          text: `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗\n║\n║ ❌ Búsqueda expirada~\n║ 💡 Usa *.play* de nuevo\n║\n╚══════════════════════════════════╝`
-        }, { quoted: m })
-        return true
-      }
+    const parts = id.split('_')
+    const index = parseInt(parts[2])
+    const chatId = parts.slice(3).join('_')
 
-      const cancion = pend.results[index]
-      if (!cancion) return true
+    const pend = pendientes[chatId]
+    if (!pend) return false
 
-      delete pendientes[chatId]
-      await procesarDescarga(m, conn, cancion.url)
-      return true
-    }
+    const song = pend.results[index]
+    if (!song) return false
 
-    return false
+    delete pendientes[chatId]
+    await procesarDescarga(m, conn, song.url)
 
-  } catch (e) {
-    console.error('❌ Error en before play:', e.message)
-    await conn.sendMessage(m.chat, {
-      text: `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗\n║\n║ ❌ Error inesperado~\n║ 💡 Intenta de nuevo\n║\n╚══════════════════════════════════╝`
-    }, { quoted: m })
-    await m.react('❌')
     return true
+  } catch (e) {
+    console.error(e)
+    return false
   }
 }
 
-handler.help    = ['play <canción o link>']
-handler.tags    = ['descargas']
-handler.command = ['play', 'mp3', 'música', 'ytmp3']
-handler.desc    = 'Busca y descarga música de YouTube'
+handler.help = ['play']
+handler.tags = ['descargas']
+handler.command = ['play', 'mp3', 'ytmp3']
 
 export default handler
