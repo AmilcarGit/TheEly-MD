@@ -1,62 +1,16 @@
 import fs from 'fs'
 import { join } from 'path'
-
-const tags = {
-  premium:      '𓅖 Premium𓅓', 
-  reacciones:   '𖣐 Reacciones𖦃',
-  main:         '𖨆 Menús y Comandos',
-}
-
-const defaultMenu = {
-  before: `
- ❛ ━━━━━━･❪ ❁ ❫ ･━━━━━━ ❜
-   🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
- ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊ ♡ °̩̥˚̩̩̥͙°̩̥ ·͙*̩̩͙˚̩̥̩̥*̩̩̥͙·̩̩̥͙*̩̩̥͙˚̩̥̩̥*̩̩͙‧͙ °̩̥˚̩̩̥͙°̩̥ ♡ ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊
-
-  🌼 *¡Hola,* *%name*! 
-   *%greeting*
-
- ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 𝘀𝗶𝘀𝘁𝗲𝗺𝗮 ☽༓･*˚⁺‧͙ 
-  ║☞ 🤖  𝑩𝒐𝒕☻        %botname
-  ║☞ 🏷️  𝑴𝒐𝒅𝒐☻      %tipo
-  ║☞ 📅  𝑭𝒆𝒄𝒉𝒂☻     %date
-  ║☞ 🕐  𝑯𝒐𝒓𝒂☻      %time
-  ║☞ ⏱️  𝑨𝒄𝒕𝒊𝒗𝒊𝒅𝒂𝒅☻ %uptime
-  ║☞ 👥  𝑮𝒓𝒖𝒑𝒐𝒔☻    %grupos
-  ║☞ 👤  𝑼𝒔𝒖𝒂𝒓𝒊𝒐𝒔☻  %usuarios
-  ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸 𓉳
-    ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
-%readmore`.trimStart(),
-
-  // 🔥 FORMATO MEJORADO: más separación y viñetas
-  header: '\n\n  ───  *%category*  ───\n\n',
-  body:   '  • *%cmd* %islimit %isPremium\n    ➥ %desc\n',
-  footer: '',
-
-  after: ` 
-  ˏ⸉ˋ‿̩͙‿̩̩̽‿̩͙‿̩̥̩‿̩̩̽‿̩͙‿̩͙‿̩̩̽‿̩͙‿̩͙‿̩̩̽‿̩͙‿̩̥̩‿̩̩̽‿̩͙‘⸊ˎ
-
-  𖥸 𝗧 𝗛 𝗘 𝗘 𝗟 𝗬 𖧷 𝗠 𝗗⇱
-
-  _╭ᵇᵒᵗ ᴺᵘᵉᵛᵒ ᵉⁿ ᵗᵘ ʷʰᵃᵗˢᵃᵖᵖ╮_
-       ᵈᵉˢᵃʳʳᵒˡˡᵃᵈᵒ ᵖᵒʳ
-    ٭ᴀ ᴍ ɪ ʟ ᴄ ᴀ ʀ ɢ ɪ ᴛ
-𝑐𝑜𝑛𝑡𝑎𝑐𝑡𝑜: 51910227479 ⃝⃟
- ┈┈┈┈․° ☣ °․┈┈┈┈
-
-  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_`.trim(),
-}
+import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys'
 
 const handler = async (m, { conn, usedPrefix: _p }) => {
   try {
     const user = global.db.data.users[m.sender] || {}
     const name = await conn.getName(m.sender)
 
-    const totalGrupos   = Object.keys(global.db.data.chats || {}).filter(id => id.endsWith('@g.us')).length
+    const totalGrupos = Object.keys(global.db.data.chats || {}).filter(id => id.endsWith('@g.us')).length
     const totalUsuarios = Object.keys(global.db.data.users || {}).length
 
-    const ahora    = new Date()
+    const ahora = new Date()
     const horaPeru = new Date(ahora.toLocaleString('en-US', { timeZone: 'America/Lima' }))
 
     const date = horaPeru.toLocaleDateString('es', {
@@ -67,18 +21,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
       hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
     })
 
-    const help = Object.values(global.plugins || {})
-      .filter(p => !p.disabled)
-      .map(p => ({
-        help:    Array.isArray(p.help) ? p.help : [p.help],
-        tags:    Array.isArray(p.tags) ? p.tags : [p.tags],
-        prefix:  'customPrefix' in p,
-        limit:   p.limit,
-        premium: p.premium,
-        desc:    p.desc || p.description || 'Sin descripción'
-      }))
-
-    let nombreBot   = 'TheEly MD'
+    let nombreBot = 'TheEly MD'
     let bannerFinal = null
 
     const imagePath = join(process.cwd(), 'lib', 'TheElyMD.jpg')
@@ -89,145 +32,151 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
       if (fs.existsSync(rootPath)) bannerFinal = fs.readFileSync(rootPath)
     }
 
-    const botActual  = conn.user?.jid?.split('@')[0].replace(/\D/g, '')
+    const botActual = conn.user?.jid?.split('@')[0].replace(/\D/g, '')
     const configPath = join('./JadiBots', botActual, 'config.json')
     if (fs.existsSync(configPath)) {
       try {
         const config = JSON.parse(fs.readFileSync(configPath))
         if (config.name) nombreBot = config.name
-      } catch (e) {
-        console.error('👑 Error leyendo config:', e)
-      }
+      } catch (e) {}
     }
 
     const tipo = conn.user.jid === global.conn.user.jid
       ? '𝗕𝗼𝘁 𝗣𝗿𝗶𝗻𝗰𝗶𝗽𝗮𝗹'
       : '𝗦𝘂𝗯-𝗕𝗼𝘁'
 
-    const menuConfig = conn.menu || defaultMenu
+    const moneda = global.moneda || '🌼 ElyCoins'
+    const userCoins = user.coin || 0
+    const userBank = user.bank || 0
+    const userExp = user.exp || 0
 
-    const _text = [
-      menuConfig.before,
-      ...Object.keys(tags).map(tag => {
-        const cmds = help
-          .filter(menu => menu.tags?.includes(tag))
-          .map(menu => menu.help.map(h =>
-            menuConfig.body
-              .replace(/%cmd/g, menu.prefix ? h : `${_p}${h}`)
-              .replace(/%islimit/g, menu.limit ? '🔒' : '')
-              .replace(/%isPremium/g, menu.premium ? '💎' : '')
-              .replace(/%desc/g, menu.desc)
-          ).join('\n')) // ← aquí se unen los comandos de un mismo plugin
-          .join('\n') // ← separación entre plugins
+    // ========== TEXTO DEL MENÚ ==========
+    const texto = `
+ ❛ ━━━━━━･❪ 🌼 ❫ ･━━━━━━ ❜
+   🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
+ ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊ ♡ °̩̥˚̩̩̥͙°̩̥ ·͙*̩̩͙˚̩̥̩̥*̩̩̥͙·̩̩̥͙*̩̩̥͙˚̩̥̩̥*̩̩͙‧͙ °̩̥˚̩̩̥͙°̩̥ ♡ ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊
 
-        return cmds
-          ? [menuConfig.header.replace(/%category/g, tags[tag]), cmds, menuConfig.footer].join('\n')
-          : ''
-      }).filter(Boolean),
-      menuConfig.after
-    ].join('\n') // ← separación general entre secciones
+  🌼 *¡Hola,* *${name}!* 
+   ${getGreeting(horaPeru.getHours())}
 
-    const replace = {
-      '%': '%',
-      p: _p,
-      botname: nombreBot,
-      taguser: '@' + m.sender.split('@')[0],
-      name,
-      date,
-      time,
-      uptime: clockString(process.uptime() * 1000),
-      tipo,
-      grupos: totalGrupos,
-      usuarios: totalUsuarios,
-      readmore: readMore,
-      greeting: getGreeting(horaPeru.getHours()),
-    }
+  📊 *TU PROGRESO:*
+  💰 ${moneda}: ${userCoins}
+  🏦 Banco: ${userBank}
+  ✨ Experiencia: ${userExp}
 
-    const text = _text.replace(
-      new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join('|')})`, 'g'),
-      (_, name) => String(replace[name])
-    )
+ ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 ☽༓･*˚⁺‧͙ 
+  ║☞ 🤖  𝑩𝒐𝒕☻        ${nombreBot}
+  ║☞ 🏷️  𝑴𝒐𝒅𝒐☻      ${tipo}
+  ║☞ 📅  𝑭𝒆𝒄𝒉𝒂☻     ${date}
+  ║☞ 🕐  𝑯𝒐𝒓𝒂☻      ${time}
+  ║☞ 👥  𝑮𝒓𝒖𝒑𝒐𝒔☻    ${totalGrupos}
+  ║☞ 👤  𝑼𝒔𝒖𝒂𝒓𝒊𝒐𝒔☻  ${totalUsuarios}
+  ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
 
-    const buttons = [
-      { buttonId: '.code', buttonText: { displayText: '🌼 𝗖𝗿𝗲𝗮𝗿 𝗦𝘂𝗯-𝗕𝗼𝘁𖨆' }, type: 1 }
+  𓏲📂 *C A T E G O R Í A S* 𓉳
+
+  🎮 .menugame     → Juegos
+  🧠 .menuia       → Inteligencia Artificial
+  🎨 .menufun      → Diversión
+  🂽 .menuestudio  → Estudio / Escuela
+  𖡹 .menugacha    → Gacha
+  💰 .menueco      → Economía
+  ✎ .menudesc      → Descargas
+  ♨️ .menugrupo    → Grupos / Admin
+  ☕ .menucreador  → Owner / Creador
+  𖥸 .menusticker  → Stickers
+  ☯️ .menusearch   → Buscadores
+
+  💡 *Selecciona una opción abajo* ⬇️
+
+  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
+    `.trim()
+
+    // ========== BOTONES INTERACTIVOS ==========
+    const rows = [
+      { title: '🎮 Juegos', id: `${_p}menugame` },
+      { title: '🧠 Inteligencia Artificial', id: `${_p}menuia` },
+      { title: '🎨 Diversión', id: `${_p}menufun` },
+      { title: '🂽 Estudio / Escuela', id: `${_p}menuestudio` },
+      { title: '𖡹 Gacha', id: `${_p}menugacha` },
+      { title: '💰 Economía', id: `${_p}menueco` },
+      { title: '✎ Descargas', id: `${_p}menudesc` },
+      { title: '♨️ Grupos / Admin', id: `${_p}menugrupo` },
+      { title: '☕ Owner / Creador', id: `${_p}menucreador` },
+      { title: '𖥸 Stickers', id: `${_p}menusticker` },
+      { title: '☯️ Buscadores', id: `${_p}menusearch` },
+      { title: '🌼 Menú Principal', id: `${_p}menu` }
     ]
 
-    const messageContent = {
-      caption:     text.trim(),
-      footer:      '𝚃𝙷𝙴𝙴𝙻𝚈-𝙼𝙳  ·  𝙲𝚘𝚖𝚊𝚗𝚍𝚘𝚜 𝙾𝚏𝚒𝚌𝚒𝚊𝚕𝚎𝚜',
-      buttons,
-      headerType:  4,
-      contextInfo: {
-        forwardingScore: 999,
-        isForwarded: true
+    const buttonsMessage = {
+      viewOnceMessage: {
+        message: {
+          messageContextInfo: {},
+          interactiveMessage: proto.Message.InteractiveMessage.create({
+            header: {
+              title: '🌼 THEELY-MD — MENÚ',
+              subtitle: 'Selecciona una categoría',
+              hasMediaAttachment: !!bannerFinal
+            },
+            body: { text: texto },
+            footer: { text: '𝚃𝙷𝙴𝙴𝙻𝚈-𝙼𝙳  ·  𝙲𝚘𝚖𝚊𝚗𝚍𝚘𝚜 𝙾𝚏𝚒𝚌𝚒𝚊𝚕𝚎𝚜' },
+            nativeFlowMessage: {
+              buttons: [{
+                name: 'single_select',
+                buttonParamsJson: JSON.stringify({
+                  title: '📂 SELECCIONA UNA CATEGORÍA',
+                  sections: [{
+                    title: '🔽 Elige una opción',
+                    rows
+                  }]
+                })
+              }]
+            }
+          })
+        }
       }
     }
 
+    // Si hay imagen, la añadimos al header
     if (bannerFinal) {
-      messageContent.image = bannerFinal
-    } else {
-      messageContent.text = text.trim()
-      delete messageContent.caption
-      delete messageContent.headerType
+      // Nota: Para imágenes en header necesitas subirlas como attachment
+      // Por simplicidad, se omite la imagen en el header interactivo
+      // Pero se puede enviar por separado como imagen + caption
+      // Mejor enviamos solo texto con botones
+      delete buttonsMessage.viewOnceMessage.message.interactiveMessage.header.hasMediaAttachment
     }
 
-    await conn.sendMessage(m.chat, messageContent, { quoted: m })
+    const msg = generateWAMessageFromContent(m.chat, buttonsMessage, { quoted: m })
+    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
     await m.react('🌼')
 
   } catch (e) {
-    console.error('💥 Error en el menú:', e)
-    await conn.reply(
-      m.chat,
-      [
-        ` ╔═════════════════════`,
-        `   🌼  T H E E L Y - M D`,
-        ` ╚═════════════════════`,
-        ``,
-        `  Ocurrió un problema al cargar`,
-        `  el menú. Por favor intenta`,
-        `  de nuevo en un momento.`,
-        ``,
-        `  💡 Mientras tanto usa:`,
-        `  *${_p}help simple*`,
-      ].join('\n'),
-      m
-    )
+    console.error('💥 Error en menú principal:', e)
+    await conn.reply(m.chat, `❌ Ocurrió un error al cargar el menú principal.`, m)
   }
 }
 
-handler.command  = ['menu', 'help', 'menú', 'ayuda', 'comandos']
-handler.alias    = ['menuu', 'ayudame', 'comanditos']
-handler.tags     = ['main']
-handler.help     = ['menu']
-handler.desc     = 'Muestra el menú principal del bot'
+handler.command = ['menu', 'help', 'menú', 'ayuda', 'comandos', 'inicio']
+handler.tags = ['main']
+handler.help = ['menu']
+handler.desc = 'Muestra el menú principal del bot con botones interactivos'
 handler.register = false
-handler.limit    = false
+handler.limit = false
 
 export default handler
 
-const more     = String.fromCharCode(8206)
-const readMore = more.repeat(4001)
-
-function clockString(ms) {
-  if (isNaN(ms)) return '--:--:--'
-  const h = Math.floor(ms / 3600000)
-  const m = Math.floor(ms / 60000) % 60
-  const s = Math.floor(ms / 1000) % 60
-  return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':')
-}
-
 function getGreeting(hour) {
   const greetings = {
-    0:  'Una madrugada tranquila para ti~',
-    1:  'La noche está en su punto más sereno~',
-    2:  'Hora perfecta para descansar la mente~',
-    3:  'Aún de madrugada, pero aquí estoy contigo~',
-    4:  'El amanecer ya casi llega~',
-    5:  'Buenos días tempraneros~',
-    6:  'El cielo empieza a iluminarse~',
-    7:  '¡Buenos días! Que tengas un excelente día~',
-    8:  'Hora del desayuno, no lo olvides~',
-    9:  'Una mañana productiva te espera~',
+    0: 'Una madrugada tranquila para ti~',
+    1: 'La noche está en su punto más sereno~',
+    2: 'Hora perfecta para descansar la mente~',
+    3: 'Aún de madrugada, pero aquí estoy contigo~',
+    4: 'El amanecer ya casi llega~',
+    5: 'Buenos días tempraneros~',
+    6: 'El cielo empieza a iluminarse~',
+    7: '¡Buenos días! Que tengas un excelente día~',
+    8: 'Hora del desayuno, no lo olvides~',
+    9: 'Una mañana productiva te espera~',
     10: 'Media mañana llena de energía~',
     11: 'Ya casi es mediodía, sigue así~',
     12: '¡Feliz mediodía! Hora de almorzar~',
