@@ -59,15 +59,13 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   🌼 *¡Hola,* *${name}!* 
    ${getGreeting(horaPeru.getHours())}
 
-  ``,
       `╔══〔 👤 *TU PERFIL* 〕══╗`,
       `║ ⭐ *Nivel:*   ${nivel}`,
       `║ ${barraExp} ${Math.round((expActual / xp) * 100)}%`,
       `║ 💰 *Coins:*  ${coins} ${moneda}`,
       `║ 🏦 *Banco:*  ${bank} ${moneda}`,
       `║ 👑 *VIP:*    ${premium ? '✅ Activo' : '❌ Sin VIP'}`,
-      `╚══════════════════════╝`,
-      ``,
+      `╚══════════════════════╝
 
         ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 ☽༓･*˚⁺‧͙ 
       `║ 🏷️  *Bot:*       ${nombreBot}`,
