@@ -2,19 +2,6 @@ import fs from 'fs'
 import { join } from 'path'
 import { generateWAMessageFromContent, proto, prepareWAMessageMedia } from '@whiskeysockets/baileys'
 
-let pluginsCache = null
-let lastCacheUpdate = 0
-
-function getPluginsCache() {
-  const now = Date.now()
-  if (!pluginsCache || now - lastCacheUpdate > 5000) {
-    const raw = global.plugins || {}
-    pluginsCache = Object.values(raw)
-    lastCacheUpdate = now
-  }
-  return pluginsCache
-}
-
 const handler = async (m, { conn, usedPrefix: _p }) => {
   try {
     const user = global.db.data.users[m.sender] || {}
@@ -63,6 +50,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const userBank = user.bank || 0
     const userExp = user.exp || 0
 
+    // ========== TEXTO DEL MENÚ ==========
     const texto = `
  ❛ ━━━━━━･❪ 🌼 ❫ ･━━━━━━ ❜
    🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
@@ -93,26 +81,27 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
     `.trim()
 
+    // ========== BOTONES INTERACTIVOS ==========
     const rows = [
-      { title: '🎮 Juegos', id: `${_p}menu5` },
-      { title: '🧠 Inteligencia Artificial', id: `${_p}menua` },
-      { title: '🎨 Diversión', id: `${_p}menufun` },
-      { title: '🂽 Estudio / Escuela', id: `${_p}menu3` },
-      { title: '𖡹 Gacha', id: `${_p}menu4` },
-      { title: '💰 Economía', id: `${_p}menu2` },
-      { title: '✎ Descargas', id: `${_p}menu1` },
-      { title: '♨️ Grupos / Admin', id: `${_p}menu6` },
-      { title: '☕ Owner / Creador', id: `${_p}menucreador` },
-      { title: '𖥸 Stickers', id: `${_p}menusticker` },
-      { title: '☯️ Buscadores', id: `${_p}menu8` },
-      { title: '📊 Información', id: `${_p}menu7` },
-      { title: '☘️ Sub-Bots', id: `${_p}menu9` },
-      { title: '☢️ Herramientas', id: `${_p}menu10` },
-      { title: '꒷ Multijugador', id: `${_p}multiplayer` },
-      { title: '👤 Mi Perfil', id: `${_p}perfil` },
-      { title: '🌼 Menú Principal', id: `${_p}menu` }
+      { title: '🎮 Juegos', id: '.menu5' },
+      { title: '🧠 Inteligencia Artificial', id: '.menua' },
+      { title: '🎨 Diversión', id: '.menufun' },
+      { title: '🂽 Estudio / Escuela', id: '.menu3' },
+      { title: '𖡹 Gacha', id: '.menu4' },
+      { title: '💰 Economía', id: '.menu2' },
+      { title: '✎ Descargas', id: '.menu1' },
+      { title: '♨️ Grupos / Admin', id: '.menu6' },
+      { title: '☕ Owner / Creador', id: '.menucreador' },
+      { title: '𖥸 Stickers', id: '.menusticker' },
+      { title: '☯️ Buscadores', id: '.menu8' },
+      { title: '📊 Información', id: '.menu7' },
+      { title: '☘️ Sub-Bots', id: '.menu9' },
+      { title: '☢️ Herramientas', id: '.menu10' },
+      { title: '꒷ Multijugador', id: '.multiplayer' },
+      { title: '🌼 Menú Principal', id: '.menu' }
     ]
 
+    // ========== PREPARAR IMAGEN PARA EL HEADER ==========
     let imageMessage = null
     if (bannerBuffer) {
       try {
@@ -121,7 +110,9 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
           { upload: conn.waUploadToServer }
         )
         imageMessage = media.imageMessage
-      } catch (e) {}
+      } catch (e) {
+        console.error('❌ Error preparando imagen:', e)
+      }
     }
 
     const buttonsMessage = {
@@ -164,6 +155,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
+// ========== MANEJADOR DE RESPUESTAS DE BOTONES ==========
 handler.before = async (m, { conn }) => {
   const flow = m.message?.interactiveResponseMessage?.nativeFlowResponseMessage
   if (!flow) return
@@ -171,44 +163,55 @@ handler.before = async (m, { conn }) => {
   try {
     const data = JSON.parse(flow.paramsJson || '{}')
     const id = data.id
-    if (!id || !id.startsWith('.')) return
+    if (!id) return
 
-    const cmdName = id.slice(1)
-    const plugins = getPluginsCache()
+    // Verificar que sea un comando de menú
+    if (id.startsWith('.')) {
+      // Buscar el plugin que maneja este comando
+      const cmdName = id.slice(1) // quitar el punto
+      const plugin = global.plugins ? Object.values(global.plugins).find(p => {
+        if (p.command) {
+          const cmds = Array.isArray(p.command) ? p.command : [p.command]
+          return cmds.includes(cmdName)
+        }
+        return false
+      }) : null
 
-    const plugin = plugins.find(p => {
-      if (p.handler && p.handler.command) {
-        const cmds = Array.isArray(p.handler.command) ? p.handler.command : [p.handler.command]
-        if (cmds.includes(cmdName)) return true
+      if (plugin && typeof plugin.handler === 'function') {
+        // Ejecutar el comando directamente
+        // Crear un objeto de mensaje simulado para que el handler lo use
+        const fakeM = {
+          ...m,
+          text: id,
+          body: id,
+          quoted: m.quoted || null
+        }
+        // Llamar al handler con los parámetros correctos
+        await plugin.handler(fakeM, { conn, text: cmdName, usedPrefix: '.', command: cmdName })
+        return true
+      } else {
+        // Si no se encuentra el plugin, intentar inyectar mensaje falso (fallback)
+        const fakeMessage = {
+          key: {
+            remoteJid: m.chat,
+            fromMe: false,
+            id: 'fake-' + Date.now()
+          },
+          message: {
+            conversation: id
+          },
+          pushName: 'Usuario',
+          sender: m.sender
+        }
+        conn.ev.emit('messages.upsert', {
+          messages: [fakeMessage],
+          type: 'notify'
+        })
+        return true
       }
-      if (p.command) {
-        const cmds = Array.isArray(p.command) ? p.command : [p.command]
-        if (cmds.includes(cmdName)) return true
-      }
-      return false
-    })
-
-    if (plugin && typeof plugin.handler === 'function') {
-      await m.react('⏳')
-      const fakeM = {
-        ...m,
-        text: id,
-        body: id,
-        quoted: m.quoted || null
-      }
-      await plugin.handler(fakeM, { conn, text: cmdName, usedPrefix: '.', command: cmdName })
-      return true
-    } else {
-      await conn.sendMessage(m.chat, {
-        text: `❌ *Comando no encontrado:* ${id}\n💡 Asegúrate de que el comando existe o usa .menu para ver las opciones.`
-      }, { quoted: m })
-      return true
     }
   } catch (e) {
     console.error('❌ Error procesando botón del menú:', e)
-    await conn.sendMessage(m.chat, {
-      text: `❌ Ocurrió un error al procesar tu selección. Intenta de nuevo.`
-    }, { quoted: m })
   }
 }
 
