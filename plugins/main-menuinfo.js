@@ -113,7 +113,7 @@ handler.command = ['menu7', 'info', 'informacion']
 handler.tags = ['main']
 handler.help = ['menu7']
 handler.desc = 'Muestra el menú de información del bot'
-handler.register = true
+handler.register = false
 handler.limit = false
 
 export default handler
