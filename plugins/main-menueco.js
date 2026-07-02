@@ -115,7 +115,7 @@ handler.command = ['menu2', 'economia', 'eco', 'menuconomia']
 handler.tags = ['main']
 handler.help = ['menu2']
 handler.desc = 'Muestra el menú de economía del bot'
-handler.register = true
+handler.register = false
 handler.limit = false
 
 export default handler
