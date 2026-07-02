@@ -59,7 +59,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   🌼 *¡Hola,* *${name}!* 
    ${getGreeting(horaPeru.getHours())}
 
-      `╔══〔 👤 *TU PERFIL* 〕══╗`,
+       ╔══〔 👤 *TU PERFIL* 〕══╗
       `║ ⭐ *Nivel:*   ${nivel}`,
       `║ ${barraExp} ${Math.round((expActual / xp) * 100)}%`,
       `║ 💰 *Coins:*  ${coins} ${moneda}`,
