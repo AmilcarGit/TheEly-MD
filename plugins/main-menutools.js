@@ -110,7 +110,7 @@ handler.command = ['menu10', 'tools', 'herramientas']
 handler.tags = ['main']
 handler.help = ['menu10']
 handler.desc = 'Muestra el menú de herramientas del bot'
-handler.register = true
+handler.register = false
 handler.limit = false
 
 export default handler
