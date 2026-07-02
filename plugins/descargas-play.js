@@ -7,8 +7,8 @@ import {
   proto
 } from '@whiskeysockets/baileys'
 
-const API_KEY  = 'elvigilante123'
-const BASE_API = 'https://elvigilante-api.onrender.com'
+const API_KEY  = 'EdwardwEqIgrqU'
+const BASE_API = 'https://dv-edward-api.onrender.com/dash'
 let pendientes = {}
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
