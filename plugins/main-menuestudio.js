@@ -17,8 +17,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
         prefix: 'customPrefix' in p,
         limit: p.limit,
         premium: p.premium,
-        desc: p.desc || p.description || 'Sin descripción',
-        register: p.register || false
+        desc: p.desc || p.description || 'Sin descripción'
       }))
 
     let bannerFinal = null
@@ -39,17 +38,14 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const comandosEstudio = help.map(menu => {
       return menu.help.map(h => {
         const cmd = menu.prefix ? h : `${_p}${h}`
-        const limit = menu.limit ? '🔒' : '🔓'
-        const premium = menu.premium ? '💎' : '🆓'
-        const registro = menu.register ? '✅' : '❌'
-        return `  ${cmd}\n  ➥ ${menu.desc} ${limit} ${premium} ${registro}`
+        return `  • *${cmd}*\n    ➥ ${menu.desc}`
       }).join('\n')
     }).filter(Boolean).join('\n\n')
 
     const before = `
  ❛ ━━━━━━･❪ 🂽 ❫ ･━━━━━━ ❜
    🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
-   ─── 𝙀𝙨𝙘𝙪𝙚𝙡𝙖 ───
+   ─── 𝙀𝙨𝙩𝙪𝙙𝙞𝙤 ───
  ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊ ♡ °̩̥˚̩̩̥͙°̩̥ ·͙*̩̩͙˚̩̥̩̥*̩̩̥͙·̩̩̥͙*̩̩̥͙˚̩̥̩̥*̩̩͙‧͙ °̩̥˚̩̩̥͙°̩̥ ♡ ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊
 
   🌼 *¡Hola,* *${name}!*
