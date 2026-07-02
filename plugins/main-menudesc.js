@@ -22,11 +22,11 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
 
     let bannerFinal = null
 
-    const imagePath = join(process.cwd(), 'lib', 'TheElyMD.jpg')
+    const imagePath = join(process.cwd(), 'lib', 'TheElyMDdesc.jpg')
     if (fs.existsSync(imagePath)) {
       bannerFinal = fs.readFileSync(imagePath)
     } else {
-      const rootPath = join(process.cwd(), 'TheElyMD.jpg')
+      const rootPath = join(process.cwd(), 'TheElyMDdesc.jpg')
       if (fs.existsSync(rootPath)) bannerFinal = fs.readFileSync(rootPath)
     }
 
@@ -56,8 +56,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ⚡ Rápidas y seguras
 
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸𓉳
-     🇩 🇪 🇸 🇨 🇦 🇷 🇬 🇦 🇸 
+  𝗖𝗢𝗠𝗔𝗡𝗗𝗢𝗦 '𝗗𝗘𝗦𝗖𝗔𝗥𝗚𝗔' 𓆦︴
     ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
 `
 
