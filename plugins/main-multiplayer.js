@@ -108,7 +108,7 @@ handler.command = ['multiplayer', 'multijugador']
 handler.tags = ['main']
 handler.help = ['multiplayer']
 handler.desc = 'Muestra el menú de juegos multijugador del bot'
-handler.register = true
+handler.register = false
 handler.limit = false
 
 export default handler
