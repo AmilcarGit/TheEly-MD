@@ -1,4 +1,3 @@
-
 import fetch from 'node-fetch'
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
@@ -20,65 +19,58 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 
   await m.react('⏳')
+  await conn.sendMessage(m.chat, {
+    text: `╔══〔 📸 *THEELY-MD — INSTAGRAM* 〕══╗\n║\n║ ⏳ *Descargando contenido...* \n║ 💡 Por favor espera~ \n║\n╚══════════════════════════════════╝`
+  }, { quoted: m })
 
   try {
     const apiUrl = `https://api.delirius.store/download/instagram?url=${encodeURIComponent(query)}`
     const res = await Promise.race([
       fetch(apiUrl),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 15000))
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 20000))
     ])
     const json = await res.json()
 
-    if (!json.status || !json.data) throw new Error('No se pudo obtener el contenido')
-
-    const data = json.data
-    const tipo = data.type || 'desconocido'
-    const titulo = data.title || data.caption || 'Sin título'
-    const autor = data.author || data.username || 'Desconocido'
-    const likes = data.likes || data.like_count || 0
-    const comentarios = data.comments || data.comment_count || 0
-
-    let mediaUrl = data.video_url || data.video || data.image_url || data.url
-    if (data.images && Array.isArray(data.images) && data.images.length > 0) {
-      mediaUrl = data.images[0]
+    if (!json.status || !json.data || !json.data.length) {
+      throw new Error('No se pudo obtener el contenido')
     }
 
-    if (!mediaUrl) throw new Error('No se encontró el contenido')
+    const items = json.data
+    let titulo = json.title || json.caption || 'Sin título'
+    let autor = json.author || json.username || 'Desconocido'
+    let likes = json.likes || json.like_count || 0
+    let comentarios = json.comments || json.comment_count || 0
 
-    const esVideo = tipo === 'video' || data.video_url || data.video
+    for (let item of items) {
+      const esVideo = item.type === 'video'
+      const mediaUrl = item.url
 
-    if (esVideo) {
-      await conn.sendMessage(m.chat, {
-        video: { url: mediaUrl },
-        caption: [
-          `╔══〔 📸 *THEELY-MD — INSTAGRAM* 〕══╗`,
-          `║`,
-          `║ ✅ *¡Descarga completada!*`,
-          `║ 🎬 *Título:* ${titulo.slice(0, 50)}`,
-          `║ 👤 *Autor:* ${autor}`,
-          `║ ❤️ *Likes:* ${likes.toLocaleString()}`,
-          `║ 💬 *Comentarios:* ${comentarios.toLocaleString()}`,
-          `║`,
-          `║ 💫 *Powered by TheEly-MD 🌼*`,
-          `╚══════════════════════════════════╝`
-        ].join('\n')
-      }, { quoted: m })
-    } else {
-      await conn.sendMessage(m.chat, {
-        image: { url: mediaUrl },
-        caption: [
-          `╔══〔 📸 *THEELY-MD — INSTAGRAM* 〕══╗`,
-          `║`,
-          `║ ✅ *¡Descarga completada!*`,
-          `║ 🖼️ *Título:* ${titulo.slice(0, 50)}`,
-          `║ 👤 *Autor:* ${autor}`,
-          `║ ❤️ *Likes:* ${likes.toLocaleString()}`,
-          `║ 💬 *Comentarios:* ${comentarios.toLocaleString()}`,
-          `║`,
-          `║ 💫 *Powered by TheEly-MD 🌼*`,
-          `╚══════════════════════════════════╝`
-        ].join('\n')
-      }, { quoted: m })
+      if (!mediaUrl) continue
+
+      const caption = [
+        `╔══〔 📸 *THEELY-MD — INSTAGRAM* 〕══╗`,
+        `║`,
+        `║ ✅ *¡Descarga completada!*`,
+        `║ ${esVideo ? '🎬' : '🖼️'} *Título:* ${titulo.slice(0, 50)}`,
+        `║ 👤 *Autor:* ${autor}`,
+        `║ ❤️ *Likes:* ${likes.toLocaleString()}`,
+        `║ 💬 *Comentarios:* ${comentarios.toLocaleString()}`,
+        `║`,
+        `║ 💫 *Powered by TheEly-MD 🌼*`,
+        `╚══════════════════════════════════╝`
+      ].join('\n')
+
+      if (esVideo) {
+        await conn.sendMessage(m.chat, {
+          video: { url: mediaUrl },
+          caption: caption
+        }, { quoted: m })
+      } else {
+        await conn.sendMessage(m.chat, {
+          image: { url: mediaUrl },
+          caption: caption
+        }, { quoted: m })
+      }
     }
 
     await m.react('✅')
@@ -91,6 +83,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       `║`,
       `║ ❌ *Error al descargar~*`,
       `║ 🔄 Intenta de nuevo`,
+      `║`,
+      `║ 💡 *Posibles causas:*`,
+      `║ ➤ Cuenta privada`,
+      `║ ➤ Link incorrecto`,
+      `║ ➤ API no disponible`,
       `║`,
       `╚══════════════════════════════════╝`
     ].join('\n'))
