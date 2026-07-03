@@ -16,9 +16,12 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
     `║`,
     `║ 💡 *Uso:*`,
-    `║ ➤ ${usedPrefix + command} osuna`,
-    `║ ➤ ${usedPrefix + command} TWICE`,
+    `║ ➤ ${usedPrefix + command} <nombre canción>`,
     `║ ➤ ${usedPrefix + command} https://youtu.be/...`,
+    `║`,
+    `║ 📌 *Ejemplos:*`,
+    `║ ➤ ${usedPrefix + command} Osuna`,
+    `║ ➤ ${usedPrefix + command} TWICE`,
     `║`,
     `╚══════════════════════════════════╝`
   ].join('\n'))
@@ -35,7 +38,14 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     }
 
     await conn.sendMessage(m.chat, {
-      text: `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗\n║\n║ 🔎 Buscando: *${query}*\n║ ⏳ Por favor espera~\n║\n╚══════════════════════════════════╝`
+      text: [
+        `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
+        `║`,
+        `║ 🔎 *Buscando:* ${query}`,
+        `║ ⏳ Por favor espera~`,
+        `║`,
+        `╚══════════════════════════════════╝`
+      ].join('\n')
     }, { quoted: m })
 
     const searchUrl = `${BASE_API}/api/search/youtube?apiKey=${API_KEY}&query=${encodeURIComponent(query)}`
@@ -44,7 +54,16 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     if (!json.status || !json.data?.length) {
       await m.react('❌')
-      return m.reply(`❌ Sin resultados para: ${query}`)
+      return m.reply([
+        `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
+        `║`,
+        `║ ❌ *Sin resultados para:*`,
+        `║ 🔍 ${query}`,
+        `║`,
+        `║ 💡 Intenta con otro término~`,
+        `║`,
+        `╚══════════════════════════════════╝`
+      ].join('\n'))
     }
 
     const results = json.data.slice(0, 5)
@@ -53,32 +72,48 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       type: 'search',
       results: results.map(v => ({ url: v.url, title: v.title }))
     }
-
     setTimeout(() => delete pendientes[m.chat], 120000)
 
+    const emojis = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣']
+
     const rows = results.map((v, i) => ({
-      header: `${i + 1}️⃣`,
+      header: emojis[i],
       title: (v.title || 'Sin título').slice(0, 35),
-      description: `👤 ${v.author?.name || 'Desconocido'} | ⏱️ ${v.duration || 'N/A'}`,
+      description: `👤 ${v.author?.name || 'Desconocido'} | ⏱️ ${v.duration || 'N/A'} | 👀 ${Number(v.views||0).toLocaleString()}`,
       id: `play_select_${i}_${m.chat}`
     }))
 
-    const bodyText = results.map((v, i) =>
-      `• ${i + 1}. ${v.title}\n  👤 ${v.author?.name}\n  ⏱️ ${v.duration}`
-    ).join('\n\n')
+    const bodyText = [
+      `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
+      `║`,
+      `║ 🔎 *Resultados para:* ${query}`,
+      `║ 🎵 *${results.length} canciones encontradas*`,
+      `║`,
+      ...results.map((v, i) => [
+        `║ ${emojis[i]} *${(v.title||'Sin título').slice(0,40)}*`,
+        `║   👤 ${v.author?.name || 'Desconocido'}`,
+        `║   ⏱️ ${v.duration || 'N/A'}`,
+        `║`
+      ]).flat(),
+      `║ 👇 *Elige y descarga directo~*`,
+      `║`,
+      `╚══════════════════════════════════╝`
+    ].join('\n')
 
     const interactiveMessage = proto.Message.InteractiveMessage.create({
+      header: {
+        title: '🌼 THEELY-MD — PLAY',
+        subtitle: 'Elige tu canción~',
+        hasMediaAttachment: false
+      },
       body: { text: bodyText },
-      footer: { text: 'THEELY-MD' },
+      footer: { text: '💫 Powered by TheEly-MD 🌼' },
       nativeFlowMessage: {
         buttons: [{
           name: 'single_select',
           buttonParamsJson: JSON.stringify({
-            title: '🎵 Elegir canción',
-            sections: [{
-              title: 'RESULTADOS',
-              rows
-            }]
+            title: '🎵 Elige una canción',
+            sections: [{ title: '🎶 RESULTADOS', rows }]
           })
         }]
       }
@@ -86,7 +121,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     const msg = generateWAMessageFromContent(
       m.chat,
-      { viewOnceMessage: { message: { interactiveMessage } } },
+      { viewOnceMessage: { message: { messageContextInfo: {}, interactiveMessage } } },
       { quoted: m }
     )
 
@@ -94,44 +129,73 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     await m.react('🎵')
 
   } catch (e) {
-    console.error(e)
-    await m.reply('❌ Error en búsqueda')
+    console.error('❌ Error en play:', e)
+    await m.react('❌')
+    m.reply([
+      `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
+      `║`,
+      `║ ❌ *Error al buscar~*`,
+      `║ 🔄 Intenta de nuevo`,
+      `║`,
+      `╚══════════════════════════════════╝`
+    ].join('\n'))
   }
 }
 
 async function procesarDescarga(m, conn, url) {
   try {
     await conn.sendMessage(m.chat, {
-      text: `⏳ Descargando audio...`
+      text: [
+        `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
+        `║`,
+        `║ ⏳ *Procesando audio...*`,
+        `║ 💡 Esto puede tardar unos segundos~`,
+        `║`,
+        `╚══════════════════════════════════╝`
+      ].join('\n')
     }, { quoted: m })
 
     const apiUrl = `${BASE_API}/api/download/ytaudio?url=${encodeURIComponent(url)}&apiKey=${API_KEY}`
     const res  = await fetch(apiUrl)
     const data = await res.json()
 
-    if (!data.status) throw new Error(data.error || 'Error API')
+    if (!data.status) throw new Error(data.error || 'Error en la API')
 
     const result = data.result || data
+    const title  = result.title || 'audio'
+    const audioUrl = result.download_url || result.url
 
-    const title = result.title || 'audio'
-
-    // 🔥 ENVIAR DIRECTO SIN DESCARGAR A DISCO
     await conn.sendMessage(m.chat, {
-      audio: { url: result.download_url || result.url },
+      audio:    { url: audioUrl },
       mimetype: 'audio/mpeg',
       fileName: `${title}.mp3`
     }, { quoted: m })
 
     await conn.sendMessage(m.chat, {
-      text: `✅ Audio enviado:\n🎵 ${title}`
+      text: [
+        `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
+        `║`,
+        `║ ✅ *¡Audio enviado!*`,
+        `║ 🎵 *${title.slice(0, 60)}*`,
+        `║`,
+        `║ 💫 *Powered by TheEly-MD 🌼*`,
+        `╚══════════════════════════════════╝`
+      ].join('\n')
     }, { quoted: m })
 
     await m.react('✅')
 
   } catch (e) {
-    console.error(e)
+    console.error('❌ Error en descarga:', e)
     await m.react('❌')
-    m.reply('❌ Error al descargar audio')
+    m.reply([
+      `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
+      `║`,
+      `║ ❌ *Error al descargar~*`,
+      `║ 💡 Verifica que el link sea válido`,
+      `║`,
+      `╚══════════════════════════════════╝`
+    ].join('\n'))
   }
 }
 
@@ -141,16 +205,27 @@ handler.before = async (m, { conn }) => {
 
   try {
     const data = JSON.parse(nativeFlow.paramsJson || '{}')
-    const id = data.id || data.selectedId
-
+    const id   = data.id || data.selectedId
     if (!id?.startsWith('play_select_')) return false
 
-    const parts = id.split('_')
-    const index = parseInt(parts[2])
+    const parts  = id.split('_')
+    const index  = parseInt(parts[2])
     const chatId = parts.slice(3).join('_')
 
     const pend = pendientes[chatId]
-    if (!pend) return false
+    if (!pend) {
+      await conn.sendMessage(m.chat, {
+        text: [
+          `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
+          `║`,
+          `║ ❌ *Búsqueda expirada~*`,
+          `║ 💡 Usa *.play* de nuevo`,
+          `║`,
+          `╚══════════════════════════════════╝`
+        ].join('\n')
+      }, { quoted: m })
+      return true
+    }
 
     const song = pend.results[index]
     if (!song) return false
@@ -159,14 +234,16 @@ handler.before = async (m, { conn }) => {
     await procesarDescarga(m, conn, song.url)
 
     return true
+
   } catch (e) {
-    console.error(e)
+    console.error('❌ Error en before play:', e)
     return false
   }
 }
 
-handler.help = ['play']
-handler.tags = ['descargas']
-handler.command = ['play', 'mp3', 'ytmp3']
+handler.help    = ['play <canción o link>']
+handler.tags    = ['descargas']
+handler.command = ['play', 'mp3', 'ytmp3', 'música']
+handler.desc    = 'Busca y descarga música de YouTube'
 
 export default handler
