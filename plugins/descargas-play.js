@@ -79,32 +79,41 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     const rows = results.map((v, i) => ({
       header: emojis[i],
       title: (v.title || 'Sin título').slice(0, 35),
-      description: `👤 ${v.author?.name || 'Desconocido'} | ⏱️ ${v.duration || 'N/A'} | 👀 ${Number(v.views||0).toLocaleString()}`,
+      description: `⏱️ ${v.duration || 'N/A'}`,
       id: `play_select_${i}_${m.chat}`
     }))
 
     const bodyText = [
       `╔══〔 🌼 *THEELY-MD — PLAY* 〕══╗`,
       `║`,
-      `║ 🔎 *Resultados para:* ${query}`,
-      `║ 🎵 *${results.length} canciones encontradas*`,
+      `║ 🔎 *${query}*`,
+      `║ 🎵 ${results.length} resultados`,
       `║`,
-      ...results.map((v, i) => [
-        `║ ${emojis[i]} *${(v.title||'Sin título').slice(0,40)}*`,
-        `║   👤 ${v.author?.name || 'Desconocido'}`,
-        `║   ⏱️ ${v.duration || 'N/A'}`,
-        `║`
-      ]).flat(),
       `║ 👇 *Elige y descarga directo~*`,
       `║`,
       `╚══════════════════════════════════╝`
     ].join('\n')
 
+    // ── Thumbnail del primer resultado ──
+    let imageMessage = null
+    const thumbnail = results[0]?.thumbnail || results[0]?.image || null
+    if (thumbnail) {
+      try {
+        const { prepareWAMessageMedia } = await import('@whiskeysockets/baileys')
+        const media = await prepareWAMessageMedia(
+          { image: { url: thumbnail } },
+          { upload: conn.waUploadToServer }
+        )
+        imageMessage = media.imageMessage
+      } catch {}
+    }
+
     const interactiveMessage = proto.Message.InteractiveMessage.create({
       header: {
         title: '🌼 THEELY-MD — PLAY',
         subtitle: 'Elige tu canción~',
-        hasMediaAttachment: false
+        hasMediaAttachment: !!imageMessage,
+        ...(imageMessage && { imageMessage })
       },
       body: { text: bodyText },
       footer: { text: '💫 Powered by TheEly-MD 🌼' },
