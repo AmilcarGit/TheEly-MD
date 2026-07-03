@@ -29,13 +29,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   await m.react('🎬')
 
   try {
-    // ── LINK DIRECTO ──
     if (isLink) {
       await procesarVideo(m, conn, query)
       return
     }
 
-    // ── BÚSQUEDA ──
     await conn.sendMessage(m.chat, {
       text: `╔══〔 🌼 *THEELY-MD — YTMP4* 〕══╗\n║\n║ 🔎 Buscando: *${query}*\n║ ⏳ Por favor espera~\n║\n╚══════════════════════════════════╝`
     }, { quoted: m })
@@ -67,11 +65,23 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     setTimeout(() => { delete pendientes[m.chat] }, 120000)
 
     const rows = results.map((v, i) => ({
-      header: ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣'][i],
-      title: (v.title || 'Sin título').slice(0, 35),
-      description: `👤 ${v.author?.name || 'Desconocido'} | ⏱️ ${v.duration || 'N/A'} | 👀 ${Number(v.views||0).toLocaleString()}`,
+      title: (v.title || 'Sin título').slice(0, 50),
+      description: `👤 ${v.author?.name || 'Desconocido'}  ⏱️ ${v.duration || 'N/A'}`,
       id: `vtmp4_select_${i}_${m.chat}`
     }))
+
+    const primerVideo = results[0]
+    let imageMessage = null
+
+    if (primerVideo?.thumbnail) {
+      try {
+        const media = await prepareWAMessageMedia(
+          { image: { url: primerVideo.thumbnail } },
+          { upload: conn.waUploadToServer }
+        )
+        imageMessage = media.imageMessage
+      } catch (e) {}
+    }
 
     const bodyText = [
       `╔══〔 🌼 *THEELY-MD — YTMP4* 〕══╗`,
@@ -79,19 +89,18 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       `║ 🔎 *Resultados para:* ${query}`,
       `║ 🎬 *${results.length} videos encontrados*`,
       `║`,
-      ...results.map((v, i) => [
-        `║ ${['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣'][i]} *${(v.title||'Sin título').slice(0,40)}*`,
-        `║   👤 ${v.author?.name || 'Desconocido'}`,
-        `║   ⏱️ ${v.duration || 'N/A'}  👀 ${Number(v.views||0).toLocaleString()}`,
-        `║`
-      ]).flat(),
       `║ 👇 *Elige y descarga directo~*`,
       `║`,
       `╚══════════════════════════════════╝`
     ].join('\n')
 
     const interactiveMessage = proto.Message.InteractiveMessage.create({
-      header: { title: '🌼 THEELY-MD — YTMP4', subtitle: 'Elige y descarga~', hasMediaAttachment: false },
+      header: {
+        title: '🌼 THEELY-MD — YTMP4',
+        subtitle: 'Elige y descarga~',
+        hasMediaAttachment: !!imageMessage,
+        ...(imageMessage && { imageMessage })
+      },
       body: { text: bodyText },
       footer: { text: '💫 Powered by TheEly-MD 🌼' },
       nativeFlowMessage: {
