@@ -226,30 +226,176 @@ export default handler
 
 function getGreeting(hour) {
   const greetings = {
-    0: 'Una madrugada tranquila para ti~',
-    1: 'La noche está en su punto más sereno~',
-    2: 'Hora perfecta para descansar la mente~',
-    3: 'Aún de madrugada, pero aquí estoy contigo~',
-    4: 'El amanecer ya casi llega~',
-    5: 'Buenos días tempraneros~',
-    6: 'El cielo empieza a iluminarse~',
-    7: '¡Buenos días! Que tengas un excelente día~',
-    8: 'Hora del desayuno, no lo olvides~',
-    9: 'Una mañana productiva te espera~',
-    10: 'Media mañana llena de energía~',
-    11: 'Ya casi es mediodía, sigue así~',
-    12: '¡Feliz mediodía! Hora de almorzar~',
-    13: 'Buenas tardes, espero la estés pasando bien~',
-    14: 'Una tarde tranquila y agradable~',
-    15: 'Momento perfecto para un café~',
-    16: 'La tarde avanza, no te canses~',
-    17: 'El atardecer se acerca, disfrútalo~',
-    18: 'Hora de relajarse un poco~',
-    19: 'La noche se acerca poco a poco~',
-    20: 'Buenas noches, cuídate mucho~',
-    21: 'La noche ha comenzado, descansa pronto~',
-    22: 'Hora de ir bajando el ritmo~',
-    23: 'Último tramo del día, ¡buenas noches!'
+    0: [
+      'Una madrugada tranquila para ti~',
+      'La noche aún joven, descansa bien~',
+      'Silencio y paz en la madrugada~',
+      'Las estrellas te cuidan esta noche~',
+      'La oscuridad es solo el preludio del amanecer~'
+    ],
+    1: [
+      'La noche está en su punto más sereno~',
+      'Hora de sueños profundos~',
+      'El mundo descansa, tú también~',
+      'La luna te acompaña en esta hora~',
+      'Todo está en calma, disfruta~'
+    ],
+    2: [
+      'Hora perfecta para descansar la mente~',
+      'La noche te envuelve en su manto~',
+      'Es el momento de soltar preocupaciones~',
+      'El silencio es tu mejor aliado~',
+      'Duerme, que mañana será otro día~'
+    ],
+    3: [
+      'Aún de madrugada, pero aquí estoy contigo~',
+      'La noche profunda, pero no estás solo~',
+      'Hora de introspección y calma~',
+      'El mundo duerme, tú sueñas~',
+      'La oscuridad da paso a la esperanza~'
+    ],
+    4: [
+      'El amanecer ya casi llega~',
+      'La noche se despide lentamente~',
+      'Las primeras luces del alba~',
+      'Hora de renovarse y comenzar~',
+      'La esperanza brilla en el horizonte~'
+    ],
+    5: [
+      'Buenos días tempraneros~',
+      'El sol despierta y tú también~',
+      'Hora de empezar con energía~',
+      'El nuevo día te espera, aprovecha~',
+      'Madrugar tiene su recompensa~'
+    ],
+    6: [
+      'El cielo empieza a iluminarse~',
+      'Buenos días, el sol te saluda~',
+      'Hora de activarse y brillar~',
+      'El amanecer te llena de vida~',
+      'Un nuevo día, nuevas oportunidades~'
+    ],
+    7: [
+      '¡Buenos días! Que tengas un excelente día~',
+      'El despertar es el primer paso al éxito~',
+      'Hora de desayunar y sonreír~',
+      'El día comienza, hazlo grande~',
+      'La mañana te regala su frescura~'
+    ],
+    8: [
+      'Hora del desayuno, no lo olvides~',
+      'La mañana avanza con fuerza~',
+      'Energía para cumplir tus metas~',
+      'El café y la buena vibra~',
+      'Aprovecha cada minuto de esta hora~'
+    ],
+    9: [
+      'Una mañana productiva te espera~',
+      'El día está en su mejor momento~',
+      'Hora de trabajar en tus sueños~',
+      'La creatividad fluye a esta hora~',
+      'Cada acción cuenta, hazla valer~'
+    ],
+    10: [
+      'Media mañana llena de energía~',
+      'Sigue adelante, vas bien~',
+      'El sol brilla para ti~',
+      'Hora de dar lo mejor de ti~',
+      'El esfuerzo de hoy es el éxito de mañana~'
+    ],
+    11: [
+      'Ya casi es mediodía, sigue así~',
+      'La mañana se despide con fuerza~',
+      'Prepara el almuerzo y la sonrisa~',
+      'Hora de cerrar metas matutinas~',
+      'El mediodía se acerca, no te detengas~'
+    ],
+    12: [
+      '¡Feliz mediodía! Hora de almorzar~',
+      'El sol en su punto más alto~',
+      'Recarga energías para la tarde~',
+      'El día está en su ecuador~',
+      'Disfruta de la luz del mediodía~'
+    ],
+    13: [
+      'Buenas tardes, espero la estés pasando bien~',
+      'La tarde comienza con calma~',
+      'Hora de seguir con buen ritmo~',
+      'El sol te acompaña en esta hora~',
+      'Cada minuto cuenta, sigue adelante~'
+    ],
+    14: [
+      'Una tarde tranquila y agradable~',
+      'El calor te invita a relajarte~',
+      'Hora de ser productivo sin prisa~',
+      'La brisa de la tarde te acaricia~',
+      'Aprovecha la luz que aún queda~'
+    ],
+    15: [
+      'Momento perfecto para un café~',
+      'La tarde avanza, pero tú brillas~',
+      'Hora de reflexionar y planear~',
+      'El sol se inclina, pero tú no~',
+      'Disfruta de la calma de la tarde~'
+    ],
+    16: [
+      'La tarde avanza, no te canses~',
+      'El día se despide lentamente~',
+      'Sigue con la misma energía~',
+      'La hora dorada de la tarde~',
+      'Cada paso te acerca a tus metas~'
+    ],
+    17: [
+      'El atardecer se acerca, disfrútalo~',
+      'La luz se vuelve cálida y suave~',
+      'Hora de cerrar el día con alegría~',
+      'El cielo se pinta de colores~',
+      'Disfruta de la magia del atardecer~'
+    ],
+    18: [
+      'Hora de relajarse un poco~',
+      'El día se va, la noche llega~',
+      'Descansa, que has trabajado bien~',
+      'El atardecer te regala paz~',
+      'Prepara tu corazón para la noche~'
+    ],
+    19: [
+      'La noche se acerca poco a poco~',
+      'El cielo se oscurece, tú brillas~',
+      'Hora de compartir con los tuyos~',
+      'La luna comienza a aparecer~',
+      'Disfruta de la tranquilidad nocturna~'
+    ],
+    20: [
+      'Buenas noches, cuídate mucho~',
+      'La noche te envuelve con suavidad~',
+      'Hora de descansar y recargar~',
+      'El día fue bueno, el descanso será mejor~',
+      'Las estrellas te vigilan esta noche~'
+    ],
+    21: [
+      'La noche ha comenzado, descansa pronto~',
+      'El silencio te invita a soñar~',
+      'Hora de desconectar y relajarte~',
+      'La oscuridad trae consigo la paz~',
+      'Mañana será otro día, descansa~'
+    ],
+    22: [
+      'Hora de ir bajando el ritmo~',
+      'La noche se vuelve profunda~',
+      'Duerme bien, sueña bonito~',
+      'El descanso es la clave del éxito~',
+      'La luna te guía en la noche~'
+    ],
+    23: [
+      'Último tramo del día, ¡buenas noches!',
+      'La noche está en su máximo esplendor~',
+      'Descansa, que mañana será mejor~',
+      'Hora de cerrar los ojos y soñar~',
+      'El día termina, pero la esperanza no~'
+    ]
   }
-  return greetings[hour] || 'que tengas un día increíble~'
+
+  const hourGreetings = greetings[hour] || greetings[0]
+  return hourGreetings[Math.floor(Math.random() * hourGreetings.length)]
 }
