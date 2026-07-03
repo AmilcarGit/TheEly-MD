@@ -136,9 +136,17 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
                   sections: [{
                     title: '🔽 Elige una opción',
                     rows
-                  }]
-                })
-              }]
+                    }]
+                  })
+                },
+                {
+                  name: 'cta_url',
+                  buttonParamsJson: JSON.stringify({
+                    display_text: '📢 Canal Oficial TheEly-MD',
+                    url: 'https://whatsapp.com/channel/0029Vb8G49lKmCPR44sIOE1i'
+                  })
+                }
+              ]
             }
           })
         }
