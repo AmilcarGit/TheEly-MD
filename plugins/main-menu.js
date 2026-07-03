@@ -50,7 +50,15 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const userBank = user.bank || 0
     const userExp = user.exp || 0
 
-    // ========== TEXTO DEL MENÚ ==========
+    const nivel = Math.floor(userExp / 100) || 1
+    const xp = nivel * 100
+    const expActual = userExp % 100
+    const barraExp = '█'.repeat(Math.floor((expActual / xp) * 10)) + '░'.repeat(10 - Math.floor((expActual / xp) * 10))
+
+    const totalPlugins = Object.keys(global.plugins || {}).length
+    const totalSubBots = Object.keys(global.db.data?.jadibot || {}).length || 0
+    const premium = user.premium || false
+
     const texto = `
  ❛ ━━━━━━･❪ 🌼 ❫ ･━━━━━━ ❜
    🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
@@ -59,29 +67,33 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   🌼 *¡Hola,* *${name}!* 
    ${getGreeting(horaPeru.getHours())}
 
-  📊 *TU PROGRESO:*
-  💰 ${moneda}: ${userCoins}
-  🏦 Banco: ${userBank}
-  ✨ Experiencia: ${userExp}
+ ╔══〔 👤 *TU PERFIL* 〕══╗
+ ║ ⭐ *Nivel:*   ${nivel}
+ ║ ${barraExp} ${Math.round((expActual / xp) * 100)}%
+ ║ 💰 *Coins:*  ${userCoins} ${moneda}
+ ║ 🏦 *Banco:*  ${userBank} ${moneda}
+ ║ 👑 *VIP:*    ${premium ? '✅ Activo' : '❌ Sin VIP'}
+ ╚══════════════════════╝
 
  ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 ☽༓･*˚⁺‧͙ 
-  ║☞ 🤖  𝑩𝒐𝒕☻        ${nombreBot}
-  ║☞ 🏷️  𝑴𝒐𝒅𝒐☻      ${tipo}
-  ║☞ 📅  𝑭𝒆𝒄𝒉𝒂☻     ${date}
-  ║☞ 🕐  𝑯𝒐𝒓𝒂☻      ${time}
-  ║☞ 👥  𝑮𝒓𝒖𝒑𝒐𝒔☻    ${totalGrupos}
-  ║☞ 👤  𝑼𝒔𝒖𝒂𝒓𝒊𝒐𝒔☻  ${totalUsuarios}
-  ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
+ ║ 🏷️  *Bot:*       ${nombreBot}
+ ║ 🔰  *Modo:*      ${tipo}
+ ║ 📅  *Fecha:*     ${date}
+ ║ 🕐  *Hora:*      ${time}
+ ║ 👥  *Grupos:*    ${totalGrupos}
+ ║ 👤  *Usuarios:*  ${totalUsuarios}
+ ║ 🔌  *Plugins:*   ${totalPlugins}
+ ║ 🤖  *Sub-Bots:*  ${totalSubBots}
+ ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
 
-  𓏲📂 *C A T E G O R Í A S* 𓉳
+ 𓏲📂 *C A T E G O R Í A S* 𓉳
 
-  📌 *Selecciona una opción en el menú desplegable.*
-  💡 *Los comandos también funcionan escribiéndolos.*
+ 📌 *Selecciona una opción en el menú desplegable.*
+ 💡 *Los comandos también funcionan escribiéndolos.*
 
-  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
+ ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
     `.trim()
 
-    // ========== BOTONES INTERACTIVOS ==========
     const rows = [
       { title: '🎮 𝗝𝘂𝗲𝗴𝗼𝘀', id: '.menu5' },
       { title: '🧠 𝗜𝗻𝘁𝗲𝗹𝗶𝗴𝗲𝗻𝗰𝗶𝗮 𝗔𝗿𝘁𝗶𝗳𝗶𝗰𝗶𝗮𝗹', id: '.menua' },
@@ -101,7 +113,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
       { title: '🌼 𝙈𝙚𝙣𝙪 𝙋𝙧𝙞𝙣𝙘𝙞𝙥𝙖𝙡', id: '.menu' }
     ]
 
-    // ========== PREPARAR IMAGEN PARA EL HEADER ==========
     let imageMessage = null
     if (bannerBuffer) {
       try {
@@ -110,9 +121,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
           { upload: conn.waUploadToServer }
         )
         imageMessage = media.imageMessage
-      } catch (e) {
-        console.error('❌ Error preparando imagen:', e)
-      }
+      } catch (e) {}
     }
 
     const buttonsMessage = {
@@ -129,16 +138,27 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
             body: { text: texto },
             footer: { text: '𝚃𝙷𝙴𝙴𝙻𝚈-𝙼𝙳  ·  𝙲𝚘𝚖𝚊𝚗𝚍𝚘𝚜 𝙾𝚏𝚒𝚌𝚒𝚊𝚕𝚎𝚜' },
             nativeFlowMessage: {
-              buttons: [{
-                name: 'single_select',
-                buttonParamsJson: JSON.stringify({
-                  title: '📂 SELECCIONA UNA CATEGORÍA',
-                  sections: [{
-                    title: '🔽 Elige una opción',
-                    rows
-                  }]
-                })
-              }]
+              buttons: [
+                {
+                  name: 'single_select',
+                  buttonParamsJson: JSON.stringify({
+                    title: '📂 SELECCIONA UNA CATEGORÍA',
+                    sections: [
+                      {
+                        title: '🔽 Elige una opción',
+                        rows
+                      }
+                    ]
+                  })
+                },
+                {
+                  name: 'cta_url',
+                  buttonParamsJson: JSON.stringify({
+                    display_text: '📢 Canal Oficial TheEly-MD',
+                    url: 'https://whatsapp.com/channel/0029Vb8G49lKmCPR44sIOE1i'
+                  })
+                }
+              ]
             }
           })
         }
@@ -155,7 +175,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
-// ========== MANEJADOR DE RESPUESTAS DE BOTONES ==========
 handler.before = async (m, { conn }) => {
   const flow = m.message?.interactiveResponseMessage?.nativeFlowResponseMessage
   if (!flow) return
@@ -163,55 +182,44 @@ handler.before = async (m, { conn }) => {
   try {
     const data = JSON.parse(flow.paramsJson || '{}')
     const id = data.id
-    if (!id) return
+    if (!id || !id.startsWith('.')) return
 
-    // Verificar que sea un comando de menú
-    if (id.startsWith('.')) {
-      // Buscar el plugin que maneja este comando
-      const cmdName = id.slice(1) // quitar el punto
-      const plugin = global.plugins ? Object.values(global.plugins).find(p => {
-        if (p.command) {
-          const cmds = Array.isArray(p.command) ? p.command : [p.command]
-          return cmds.includes(cmdName)
-        }
-        return false
-      }) : null
+    const cmdName = id.slice(1)
+    const plugins = Object.values(global.plugins || {})
 
-      if (plugin && typeof plugin.handler === 'function') {
-        // Ejecutar el comando directamente
-        // Crear un objeto de mensaje simulado para que el handler lo use
-        const fakeM = {
-          ...m,
-          text: id,
-          body: id,
-          quoted: m.quoted || null
-        }
-        // Llamar al handler con los parámetros correctos
-        await plugin.handler(fakeM, { conn, text: cmdName, usedPrefix: '.', command: cmdName })
-        return true
-      } else {
-        // Si no se encuentra el plugin, intentar inyectar mensaje falso (fallback)
-        const fakeMessage = {
-          key: {
-            remoteJid: m.chat,
-            fromMe: false,
-            id: 'fake-' + Date.now()
-          },
-          message: {
-            conversation: id
-          },
-          pushName: 'Usuario',
-          sender: m.sender
-        }
-        conn.ev.emit('messages.upsert', {
-          messages: [fakeMessage],
-          type: 'notify'
-        })
-        return true
+    const plugin = plugins.find(p => {
+      if (p.command) {
+        const cmds = Array.isArray(p.command) ? p.command : [p.command]
+        if (cmds.includes(cmdName)) return true
       }
+      if (p.handler && p.handler.command) {
+        const cmds = Array.isArray(p.handler.command) ? p.handler.command : [p.handler.command]
+        if (cmds.includes(cmdName)) return true
+      }
+      return false
+    })
+
+    if (plugin && typeof plugin.handler === 'function') {
+      await m.react('⏳')
+      const fakeM = {
+        ...m,
+        text: id,
+        body: id,
+        quoted: m.quoted || null
+      }
+      await plugin.handler(fakeM, { conn, text: cmdName, usedPrefix: '.', command: cmdName })
+      return true
+    } else {
+      await conn.sendMessage(m.chat, {
+        text: `❌ *Comando no encontrado:* ${id}\n💡 Asegúrate de que el comando existe o usa .menu para ver las opciones.`
+      }, { quoted: m })
+      return true
     }
   } catch (e) {
     console.error('❌ Error procesando botón del menú:', e)
+    await conn.sendMessage(m.chat, {
+      text: `❌ Ocurrió un error al procesar tu selección. Intenta de nuevo.`
+    }, { quoted: m })
   }
 }
 
