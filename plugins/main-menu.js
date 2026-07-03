@@ -50,15 +50,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const userBank = user.bank || 0
     const userExp = user.exp || 0
 
-    const nivel = Math.floor(userExp / 100) || 1
-    const xp = nivel * 100
-    const expActual = userExp % 100
-    const barraExp = '█'.repeat(Math.floor((expActual / xp) * 10)) + '░'.repeat(10 - Math.floor((expActual / xp) * 10))
-
-    const totalPlugins = Object.keys(global.plugins || {}).length
-    const totalSubBots = Object.keys(global.db.data?.jadibot || {}).length || 0
-    const premium = user.premium || false
-
     const texto = `
  ❛ ━━━━━━･❪ 🌼 ❫ ･━━━━━━ ❜
    🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
@@ -67,31 +58,26 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   🌼 *¡Hola,* *${name}!* 
    ${getGreeting(horaPeru.getHours())}
 
- ╔══〔 👤 *TU PERFIL* 〕══╗
- ║ ⭐ *Nivel:*   ${nivel}
- ║ ${barraExp} ${Math.round((expActual / xp) * 100)}%
- ║ 💰 *Coins:*  ${userCoins} ${moneda}
- ║ 🏦 *Banco:*  ${userBank} ${moneda}
- ║ 👑 *VIP:*    ${premium ? '✅ Activo' : '❌ Sin VIP'}
- ╚══════════════════════╝
+  📊 *TU PROGRESO:*
+  💰 ${moneda}: ${userCoins}
+  🏦 Banco: ${userBank}
+  ✨ Experiencia: ${userExp}
 
  ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 ☽༓･*˚⁺‧͙ 
- ║ 🏷️  *Bot:*       ${nombreBot}
- ║ 🔰  *Modo:*      ${tipo}
- ║ 📅  *Fecha:*     ${date}
- ║ 🕐  *Hora:*      ${time}
- ║ 👥  *Grupos:*    ${totalGrupos}
- ║ 👤  *Usuarios:*  ${totalUsuarios}
- ║ 🔌  *Plugins:*   ${totalPlugins}
- ║ 🤖  *Sub-Bots:*  ${totalSubBots}
- ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
+  ║☞ 🤖  𝑩𝒐𝒕☻        ${nombreBot}
+  ║☞ 🏷️  𝑴𝒐𝒅𝒐☻      ${tipo}
+  ║☞ 📅  𝑭𝒆𝒄𝒉𝒂☻     ${date}
+  ║☞ 🕐  𝑯𝒐𝒓𝒂☻      ${time}
+  ║☞ 👥  𝑮𝒓𝒖𝒑𝒐𝒔☻    ${totalGrupos}
+  ║☞ 👤  𝑼𝒔𝒖𝒂𝒓𝒊𝒐𝒔☻  ${totalUsuarios}
+  ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
 
- 𓏲📂 *C A T E G O R Í A S* 𓉳
+  𓏲📂 *C A T E G O R Í A S* 𓉳
 
- 📌 *Selecciona una opción en el menú desplegable.*
- 💡 *Los comandos también funcionan escribiéndolos.*
+  📌 *Selecciona una opción en el menú desplegable.*
+  💡 *Los comandos también funcionan escribiéndolos.*
 
- ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
+  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
     `.trim()
 
     const rows = [
@@ -143,12 +129,10 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
                   name: 'single_select',
                   buttonParamsJson: JSON.stringify({
                     title: '📂 SELECCIONA UNA CATEGORÍA',
-                    sections: [
-                      {
-                        title: '🔽 Elige una opción',
-                        rows
-                      }
-                    ]
+                    sections: [{
+                      title: '🔽 Elige una opción',
+                      rows
+                    }]
                   })
                 },
                 {
