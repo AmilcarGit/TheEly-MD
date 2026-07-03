@@ -120,13 +120,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         `╔══〔 🎬 *THEELY-MD — TIKTOK* 〕══╗`,
         `║`,
         `║ ❌ *Error al descargar~*`,
-        `║`,
-        `║ 💡 *Posibles causas:*`,
-        `║ ➤ Video privado o eliminado`,
-        `║ ➤ Link incorrecto`,
-        `║ ➤ API no disponible`,
-        `║`,
-        `║ 🔄 Intenta de nuevo~`,
+        `║ 🔄 Intenta de nuevo`,
         `║`,
         `╚══════════════════════════════════╝`
       ].join('\n'))
@@ -158,7 +152,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       throw new Error('Sin resultados')
     }
 
-    // 🔥 AHORA MUESTRA HASTA 10 RESULTADOS
     const resultados = searchData.meta.slice(0, 10)
 
     let media = null
@@ -183,20 +176,12 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       }
     })
 
-    const listaTexto = resultados.map((v, i) => [
-      `║ ${EMOJIS_NUM[i] || '🔢'} *${(v.title || 'Sin título').slice(0, 35)}*`,
-      `║   👤 ${v.author?.nickname || 'Desconocido'}`,
-      `║   ⏱️ ${v.duration || '?'}s  ❤️ ${(v.like || 0).toLocaleString()}`,
-      `║`
-    ]).flat()
-
     const bodyText = [
       `╔══〔 🎬 *THEELY-MD — TIKTOK* 〕══╗`,
       `║`,
       `║ 🔍 *Búsqueda:* ${query}`,
       `║ 📊 *Resultados:* ${resultados.length}`,
       `║`,
-      ...listaTexto,
       `║ 👇 *Elige un video~*`,
       `║`,
       `╚══════════════════════════════════╝`
@@ -219,10 +204,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     m.reply([
       `╔══〔 🎬 *THEELY-MD — TIKTOK* 〕══╗`,
       `║`,
-      `║ ❌ *Sin resultados para:*`,
+      `║ ❌ *Sin resultados*`,
       `║ 🔍 ${query}`,
-      `║`,
-      `║ 💡 Intenta con otro término~`,
       `║`,
       `╚══════════════════════════════════╝`
     ].join('\n'))
@@ -247,10 +230,6 @@ handler.before = async (m, { conn }) => {
           `║ .tiktok baile viral`,
           `║ .tiktok tiktok.com/...`,
           `║`,
-          `║ 📌 También puedes usar:`,
-          `║ .tt <búsqueda>`,
-          `║ .tt <link>`,
-          `║`,
           `╚══════════════════════════════════╝`
         ].join('\n')
       }, { quoted: m })
@@ -270,7 +249,7 @@ handler.before = async (m, { conn }) => {
       text: [
         `╔══〔 🎬 *THEELY-MD — TIKTOK* 〕══╗`,
         `║`,
-        `║ ⏳ *Descargando video...*`,
+        `║ ⏳ *Descargando...*`,
         `║ 🎬 ${titulo.slice(0, 40) || 'TikTok'}`,
         `║`,
         `╚══════════════════════════════════╝`
