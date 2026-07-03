@@ -94,8 +94,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       ].join('\n')
     }, { quoted: m })
 
+    // 🔥 API actualizada
+    const apiUrl = `https://api.delirius.store/download/instagram?url=${encodeURIComponent(query)}`
     const res = await Promise.race([
-      fetch(`https://dv-edward-api.onrender.com/api/download/instagram?url=${encodeURIComponent(query)}&apiKey=edward123`),
+      fetch(apiUrl),
       new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 15000))
     ])
     const json = await res.json()
