@@ -1,4 +1,31 @@
 import gTTS from 'node-gtts'
+import fs from 'fs'
+import path from 'path'
+import fluent_ffmpeg from 'fluent-ffmpeg'
+
+const tmp = path.join(process.cwd(), 'tmp')
+if (!fs.existsSync(tmp)) fs.mkdirSync(tmp, { recursive: true })
+
+async function mp3AOgg(bufferMp3) {
+  const inFile = path.join(tmp, `${Date.now()}-tts.mp3`)
+  const outFile = `${inFile}.ogg`
+  await fs.promises.writeFile(inFile, bufferMp3)
+
+  await new Promise((resolve, reject) => {
+    fluent_ffmpeg(inFile)
+      .audioCodec('libopus')
+      .audioBitrate('64k')
+      .toFormat('ogg')
+      .save(outFile)
+      .on('error', reject)
+      .on('end', resolve)
+  })
+
+  const bufferOgg = await fs.promises.readFile(outFile)
+  fs.promises.unlink(inFile).catch(() => {})
+  fs.promises.unlink(outFile).catch(() => {})
+  return bufferOgg
+}
 
 const handler = async (m, { conn, text, usedPrefix, command }) => {
   const nombreBot = global.namebot || 'TheEly-MD'
@@ -52,18 +79,20 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
     const gtts = gTTS(idioma)
     const stream = gtts.stream(frase)
 
-    const buffer = await new Promise((resolve, reject) => {
+    const bufferMp3 = await new Promise((resolve, reject) => {
       const chunks = []
       stream.on('data', (chunk) => chunks.push(chunk))
       stream.on('end', () => resolve(Buffer.concat(chunks)))
       stream.on('error', reject)
     })
 
-    if (!buffer.length) throw new Error('Audio vacío')
+    if (!bufferMp3.length) throw new Error('Audio vacío')
+
+    const buffer = await mp3AOgg(bufferMp3)
 
     await conn.sendMessage(m.chat, {
       audio: buffer,
-      mimetype: 'audio/mpeg',
+      mimetype: 'audio/ogg; codecs=opus',
       ptt: true
     }, { quoted: m })
 
