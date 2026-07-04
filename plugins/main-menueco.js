@@ -39,9 +39,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const comandosEco = help.map(menu => {
       return menu.help.map(h => {
         const cmd = menu.prefix ? h : `${_p}${h}`
-        const limit = menu.limit ? '🔒' : '🔓'
-        const premium = menu.premium ? '💎' : '🆓'
-        return `  ${cmd}\n  ➥ ${menu.desc} ${limit} ${premium}`
+        return `  ${cmd}\n  ➥ ${menu.desc}`
       }).join('\n')
     }).filter(Boolean).join('\n\n')
 
