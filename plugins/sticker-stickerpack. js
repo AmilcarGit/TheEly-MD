@@ -74,46 +74,92 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       ].join('\n')
     }, { quoted: m })
 
+    // ====== CONSULTA A LA API ======
+    const url = `${API_URL}?q=${encodeURIComponent(query)}&apiKey=${API_KEY}`
+    console.log('📡 URL de la API:', url)
+
     const res = await Promise.race([
-      fetch(`${API_URL}?q=${encodeURIComponent(query)}&apiKey=${API_KEY}`),
+      fetch(url),
       new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 15000))
     ])
-    const json = await res.json()
 
-    if (!json.status || !json.result?.data?.length) {
+    // Verificar si la respuesta es ok
+    if (!res.ok) {
+      throw new Error(`Error HTTP: ${res.status} - ${res.statusText}`)
+    }
+
+    const json = await res.json()
+    console.log('📦 Respuesta de la API:', JSON.stringify(json, null, 2)) // Log para depuración
+
+    // ====== EXTRAER RESULTADOS FLEXIBLE ======
+    let resultados = []
+    if (json.status && json.result && json.result.data) {
+      resultados = json.result.data
+    } else if (json.status && json.data) {
+      resultados = json.data
+    } else if (json.data && Array.isArray(json.data)) {
+      resultados = json.data
+    } else if (json.results && Array.isArray(json.results)) {
+      resultados = json.results
+    } else if (Array.isArray(json)) {
+      resultados = json
+    } else if (json.packs && Array.isArray(json.packs)) {
+      resultados = json.packs
+    } else {
+      // Intentar encontrar cualquier array en la respuesta
+      for (const key of Object.keys(json)) {
+        if (Array.isArray(json[key]) && json[key].length > 0) {
+          resultados = json[key]
+          break
+        }
+      }
+    }
+
+    if (!resultados || resultados.length === 0) {
       throw new Error('Sin resultados')
     }
 
-    const resultados = json.result.data.slice(0, 10)
+    // Limitar a 10 resultados
+    resultados = resultados.slice(0, 10)
 
+    // ====== PREPARAR IMAGEN PARA EL HEADER ======
     let media = null
-    const primeraImg = resultados[0]?.image || ''
+    const primeraImg = resultados[0]?.image || resultados[0]?.thumbnail || resultados[0]?.thumb || resultados[0]?.icon || ''
     if (primeraImg) {
       try {
         media = await prepareWAMessageMedia(
           { image: { url: primeraImg } },
           { upload: conn.waUploadToServer }
         )
-      } catch {}
+      } catch (e) {
+        console.warn('No se pudo obtener la imagen del header:', e.message)
+      }
     }
 
+    // ====== CONSTRUIR FILAS DE BOTONES ======
     const rows = resultados.map((pack, i) => {
-      const nombreB64 = Buffer.from(pack.name || '').toString('base64')
-      const urlB64 = Buffer.from(pack.url || '').toString('base64')
+      const nombre = pack.name || pack.title || pack.nombre || pack.pack_name || 'Pack sin nombre'
+      const url = pack.url || pack.link || pack.download_url || pack.enlace || pack.pack_url || ''
+      const descargas = pack.download || pack.downloads || pack.descargas || pack.count || 0
+      const nombreB64 = Buffer.from(nombre).toString('base64')
+      const urlB64 = Buffer.from(url).toString('base64')
       const numero = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'][i] || '🔢'
       return {
-        header: `${numero} ${pack.name || 'Sin nombre'}`,
-        title: `📦 ${pack.name || 'Sin nombre'}`,
-        description: `⬇️ ${pack.download || 0} descargas`,
+        header: `${numero} ${nombre.slice(0, 30)}`,
+        title: nombre.slice(0, 45),
+        description: `⬇️ ${descargas} descargas`,
         id: `sp_${i}_${nombreB64}_${urlB64}`
       }
     })
 
+    // ====== TEXTO DEL MENÚ ======
     const listaTexto = resultados.map((pack, i) => {
       const numero = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'][i] || '🔢'
+      const nombre = pack.name || pack.title || pack.nombre || pack.pack_name || 'Pack sin nombre'
+      const descargas = pack.download || pack.downloads || pack.descargas || pack.count || 0
       return [
-        `║ ${numero} *${pack.name || 'Sin nombre'}*`,
-        `║   ⬇️ ${pack.download || 0} descargas`,
+        `║ ${numero} *${nombre.slice(0, 40)}*`,
+        `║   ⬇️ ${descargas} descargas`,
         `║`
       ]
     }).flat()
@@ -130,6 +176,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       `╚══════════════════════════════════╝`
     ].join('\n')
 
+    // ====== BOTÓN INTERACTIVO ======
     const buttons = [{
       name: 'single_select',
       buttonParamsJson: JSON.stringify({
@@ -147,8 +194,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     m.reply([
       `╔══〔 🖼️ *THEELY-MD — STICKERPACK* 〕══╗`,
       `║`,
-      `║ ❌ *Sin resultados para:*`,
-      `║ 🔍 ${query}`,
+      `║ ❌ *Error al buscar:* ${e.message}`,
       `║`,
       `║ 💡 Intenta con otro término~`,
       `║`,
@@ -204,21 +250,37 @@ handler.before = async (m, { conn }) => {
       ].join('\n')
     }, { quoted: m })
 
-    await conn.sendMessage(m.chat, {
-      text: [
-        `╔══〔 🖼️ *THEELY-MD — STICKERPACK* 〕══╗`,
-        `║`,
-        `║ ✅ *Pack encontrado~*`,
-        `║`,
-        `║ 📦 *Nombre:* ${nombre}`,
-        `║ 🔗 *Enlace:* ${url}`,
-        `║`,
-        `║ 💡 *Abre el enlace para ver los stickers*`,
-        `║`,
-        `║ 💫 *Powered by TheEly-MD 🌼*`,
-        `╚══════════════════════════════════╝`
-      ].join('\n')
-    }, { quoted: m })
+    // Si la URL es válida, la enviamos
+    if (url) {
+      await conn.sendMessage(m.chat, {
+        text: [
+          `╔══〔 🖼️ *THEELY-MD — STICKERPACK* 〕══╗`,
+          `║`,
+          `║ ✅ *Pack encontrado~*`,
+          `║`,
+          `║ 📦 *Nombre:* ${nombre}`,
+          `║ 🔗 *Enlace:* ${url}`,
+          `║`,
+          `║ 💡 *Abre el enlace para ver los stickers*`,
+          `║`,
+          `║ 💫 *Powered by TheEly-MD 🌼*`,
+          `╚══════════════════════════════════╝`
+        ].join('\n')
+      }, { quoted: m })
+    } else {
+      await conn.sendMessage(m.chat, {
+        text: [
+          `╔══〔 🖼️ *THEELY-MD — STICKERPACK* 〕══╗`,
+          `║`,
+          `║ ⚠️ *Pack sin enlace disponible*`,
+          `║`,
+          `║ 📦 *Nombre:* ${nombre}`,
+          `║`,
+          `║ 💫 *Powered by TheEly-MD 🌼*`,
+          `╚══════════════════════════════════╝`
+        ].join('\n')
+      }, { quoted: m })
+    }
 
     await m.react('✅')
     return true
