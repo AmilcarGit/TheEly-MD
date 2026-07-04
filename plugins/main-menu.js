@@ -1,4 +1,3 @@
-
 import fs from 'fs'
 import { join } from 'path'
 import { generateWAMessageFromContent, proto, prepareWAMessageMedia } from '@whiskeysockets/baileys'
