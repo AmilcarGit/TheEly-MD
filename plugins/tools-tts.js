@@ -52,9 +52,12 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
     const gtts = gTTS(idioma)
     const stream = gtts.stream(frase)
 
-    const chunks = []
-    for await (const chunk of stream) chunks.push(chunk)
-    const buffer = Buffer.concat(chunks)
+    const buffer = await new Promise((resolve, reject) => {
+      const chunks = []
+      stream.on('data', (chunk) => chunks.push(chunk))
+      stream.on('end', () => resolve(Buffer.concat(chunks)))
+      stream.on('error', reject)
+    })
 
     if (!buffer.length) throw new Error('Audio vacío')
 
