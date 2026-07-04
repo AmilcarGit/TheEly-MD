@@ -33,7 +33,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     }
 
     const botActual = conn.user?.jid?.split('@')[0].replace(/\D/g, '')
-    const configPath = join('./JadiBots', botActual, 'config.json')
+    const configPath = join(`./${global.jadi}`, botActual, 'config.json')
     if (fs.existsSync(configPath)) {
       try {
         const config = JSON.parse(fs.readFileSync(configPath))
@@ -50,7 +50,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const userBank = user.bank || 0
     const userExp = user.exp || 0
 
-    // ========== TEXTO DEL MENÚ ==========
     const texto = `
  ❛ ━━━━━━･❪ 🌼 ❫ ･━━━━━━ ❜
    🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
@@ -81,7 +80,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
     `.trim()
 
-    // ========== BOTONES INTERACTIVOS ==========
     const rows = [
       { title: '🎮 𝗝𝘂𝗲𝗴𝗼𝘀', id: '.menu5' },
       { title: '🧠 𝗜𝗻𝘁𝗲𝗹𝗶𝗴𝗲𝗻𝗰𝗶𝗮 𝗔𝗿𝘁𝗶𝗳𝗶𝗰𝗶𝗮𝗹', id: '.menua' },
@@ -101,7 +99,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
       { title: '🌼 𝙈𝙚𝙣𝙪 𝙋𝙧𝙞𝙣𝙘𝙞𝙥𝙖𝙡', id: '.menu' }
     ]
 
-    // ========== PREPARAR IMAGEN PARA EL HEADER ==========
     let imageMessage = null
     if (bannerBuffer) {
       try {
@@ -163,7 +160,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   }
 }
 
-// ========== MANEJADOR DE RESPUESTAS DE BOTONES ==========
 handler.before = async (m, { conn }) => {
   const flow = m.message?.interactiveResponseMessage?.nativeFlowResponseMessage
   if (!flow) return
@@ -173,10 +169,8 @@ handler.before = async (m, { conn }) => {
     const id = data.id
     if (!id) return
 
-    // Verificar que sea un comando de menú
     if (id.startsWith('.')) {
-      // Buscar el plugin que maneja este comando
-      const cmdName = id.slice(1) // quitar el punto
+      const cmdName = id.slice(1)
       const plugin = global.plugins ? Object.values(global.plugins).find(p => {
         if (p.command) {
           const cmds = Array.isArray(p.command) ? p.command : [p.command]
@@ -186,19 +180,15 @@ handler.before = async (m, { conn }) => {
       }) : null
 
       if (plugin && typeof plugin.handler === 'function') {
-        // Ejecutar el comando directamente
-        // Crear un objeto de mensaje simulado para que el handler lo use
         const fakeM = {
           ...m,
           text: id,
           body: id,
           quoted: m.quoted || null
         }
-        // Llamar al handler con los parámetros correctos
         await plugin.handler(fakeM, { conn, text: cmdName, usedPrefix: '.', command: cmdName })
         return true
       } else {
-        // Si no se encuentra el plugin, intentar inyectar mensaje falso (fallback)
         const fakeMessage = {
           key: {
             remoteJid: m.chat,
