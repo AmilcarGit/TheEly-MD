@@ -7,7 +7,7 @@ import {
 } from '@whiskeysockets/baileys'
 
 const API_KEY  = 'edward123'
-const BASE_API = 'https://dv-edward-api.onrender.com'
+const BASE_API = 'https://dv-edward.onrender.com'
 
 let pendientes = {}
 
