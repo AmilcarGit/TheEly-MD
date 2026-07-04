@@ -10,7 +10,7 @@ import {
 let pendientes = {}
 const API_URL    = 'https://api.delirius.store/download/ytmp4'
 const API_KEY    = 'edward123'
-const BASE_API   = 'https://dv-edward-api.onrender.com'
+const BASE_API   = 'https://dv-edward.onrender.com'
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (!text) return m.reply([
