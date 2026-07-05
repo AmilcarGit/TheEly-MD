@@ -15,10 +15,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
         help: Array.isArray(p.help) ? p.help : [p.help],
         tags: Array.isArray(p.tags) ? p.tags : [p.tags],
         prefix: 'customPrefix' in p,
-        limit: p.limit,
-        premium: p.premium,
-        desc: p.desc || p.description || 'Sin descripción',
-        register: p.register || false
+        desc: p.desc || p.description || 'Sin descripción'
       }))
 
     let bannerFinal = null
@@ -39,10 +36,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const comandosSticker = help.map(menu => {
       return menu.help.map(h => {
         const cmd = menu.prefix ? h : `${_p}${h}`
-        const limit = menu.limit ? '🔒' : '🔓'
-        const premium = menu.premium ? '💎' : '🆓'
-        const registro = menu.register ? '✅' : '❌'
-        return `  ${cmd}\n  ➥ ${menu.desc} ${limit} ${premium} ${registro}`
+        return `  ${cmd}\n  ➥ ${menu.desc}`
       }).join('\n')
     }).filter(Boolean).join('\n\n')
 
@@ -58,25 +52,14 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   𖥸 *COMANDOS DE STICKERS:*
   🎨 Crea stickers desde imágenes, videos y textos.
   🖼️ Personaliza y comparte con tus amigos.
-  💰 ${moneda}: ${userCoins}
-  🏦 Banco: ${userBank}
-  ✨ Experiencia: ${userExp}
-
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸 𓉳
-    ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
+  𓏲𝐂𝐎𝐌𝐀𝐍𝐃𝐎𝐒 𝐏𝐀𝐑𝐀 𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒 𓆝
 `
 
     const after = `
   ˏ⸉ˋ‿̩͙‿̩̩̽‿̩͙‿̩̥̩‿̩̩̽‿̩͙‿̩͙‿̩̩̽‿̩͙‿̩͙‿̩̩̽‿̩͙‿̩̥̩‿̩̩̽‿̩͙‘⸊ˎ
 
   𖥸 𝗧 𝗛 𝗘 𝗘 𝗟 𝗬 𖧷 𝗠 𝗗⇱
-
-  _╭ᵇᵒᵗ ᴺᵘᵉᵛᵒ ᵉⁿ ᵗᵘ ʷʰᵃᵗˢᵃᵖᵖ╮_
-       ᵈᵉˢᵃʳʳᵒˡˡᵃᵈᵒ ᵖᵒʳ
-    ٭ᴀ ᴍ ɪ ʟ ᴄ ᴀ ʀ ɢ ɪ ᴛ
- 𝑐𝑜𝑛𝑡𝑎𝑐𝑡𝑜: 51910227479 ⃝⃟
- ┈┈┈┈․° ☣ °․┈┈┈┈
 
   ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
   💡 Usa .menu para ver todos los comandos
