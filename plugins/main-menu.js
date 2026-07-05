@@ -55,14 +55,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
    🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
  ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊ ♡ °̩̥˚̩̩̥͙°̩̥ ·͙*̩̩͙˚̩̥̩̥*̩̩̥͙·̩̩̥͙*̩̩̥͙˚̩̥̩̥*̩̩͙‧͙ °̩̥˚̩̩̥͙°̩̥ ♡ ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊
 
-  🌼 *¡Hola,* *${name}!* 
-   ${getGreeting(horaPeru.getHours())}
-
-  📊 *TU PROGRESO:*
-  💰 ${moneda}: ${userCoins}
-  🏦 Banco: ${userBank}
-  ✨ Experiencia: ${userExp}
-
  ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 ☽༓･*˚⁺‧͙ 
   ║☞ 🤖  𝑩𝒐𝒕☻        ${nombreBot}
   ║☞ 🏷️  𝑴𝒐𝒅𝒐☻      ${tipo}
