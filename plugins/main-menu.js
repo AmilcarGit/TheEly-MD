@@ -52,9 +52,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
 
     const texto = `
  ❛ ━━━━━━･❪ 🌼 ❫ ･━━━━━━ ❜
-   🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
- ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊ ♡ °̩̥˚̩̩̥͙°̩̥ ·͙*̩̩͙˚̩̥̩̥*̩̩̥͙·̩̩̥͙*̩̩̥͙˚̩̥̩̥*̩̩͙‧͙ °̩̥˚̩̩̥͙°̩̥ ♡ ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊
-
  ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 ☽༓･*˚⁺‧͙ 
   ║☞ 🤖  𝑩𝒐𝒕☻        ${nombreBot}
   ║☞ 🏷️  𝑴𝒐𝒅𝒐☻      ${tipo}
@@ -64,9 +61,9 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ║☞ 👤  𝑼𝒔𝒖𝒂𝒓𝒊𝒐𝒔☻  ${totalUsuarios}
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
 
-  𓏲📂 *C A T E G O R Í A S* 𓉳
+  𓏲📂 *C A T E G O R Í A S* 𓅂
 
-  📌 *Selecciona una opción en el menú desplegable.*
+  📌 *Selecciona una opción en el menu.*
 
   ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗
          ᵇᵒᵗ ᵉⁿ ᵈᵉˢᵃʳʳᵒˡˡᵃᵈᵒ★_
