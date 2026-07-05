@@ -58,8 +58,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ✨ Experiencia: ${userExp}
 
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸 𓉳
-     🇪 🇨 🇴 🇳 🇴 🇲 🇮 🇦 
+  𓏲𝐌𝐄𝐍𝐔 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀
      ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
 `
 
