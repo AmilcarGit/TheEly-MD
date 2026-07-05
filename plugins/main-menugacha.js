@@ -17,8 +17,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
         prefix: 'customPrefix' in p,
         limit: p.limit,
         premium: p.premium,
-        desc: p.desc || p.description || 'Sin descripción',
-        register: p.register || false
+        desc: p.desc || p.description || 'Sin descripción'
       }))
 
     let bannerFinal = null
@@ -39,10 +38,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const comandosGacha = help.map(menu => {
       return menu.help.map(h => {
         const cmd = menu.prefix ? h : `${_p}${h}`
-        const limit = menu.limit ? '🔒' : '🔓'
-        const premium = menu.premium ? '💎' : '🆓'
-        const registro = menu.register ? '✅' : '❌'
-        return `  ${cmd}\n  ➥ ${menu.desc} ${limit} ${premium} ${registro}`
+        return `  ${cmd}\n  ➥ ${menu.desc}`
       }).join('\n')
     }).filter(Boolean).join('\n\n')
 
@@ -62,9 +58,8 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ✨ Experiencia: ${userExp}
 
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸𓉳
-       🇬 🇦 🇨 🇭 🇦 
-    ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
+  𝐌𝐄𝐍𝐔 𝐆𝐀𝐂𝐇𝐀 (☞ ﾟ∀ﾟ)☞
+
 `
 
     const after = `
@@ -115,7 +110,7 @@ handler.command = ['menu4', 'gachamenu', 'gacha']
 handler.tags = ['main']
 handler.help = ['menu4']
 handler.desc = 'Muestra el menú del sistema gacha del bot'
-handler.register = false  // el menú en sí no requiere registro
+handler.register = false
 handler.limit = false
 
 export default handler
