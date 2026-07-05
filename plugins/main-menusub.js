@@ -15,8 +15,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
         help: Array.isArray(p.help) ? p.help : [p.help],
         tags: Array.isArray(p.tags) ? p.tags : [p.tags],
         prefix: 'customPrefix' in p,
-        limit: p.limit,
-        premium: p.premium,
         desc: p.desc || p.description || 'Sin descripción'
       }))
 
@@ -30,15 +28,12 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
       if (fs.existsSync(rootPath)) bannerFinal = fs.readFileSync(rootPath)
     }
 
-    // Contar sub-bots activos (si existe la data)
     const totalSubBots = Object.keys(global.db.data?.jadibot || {}).length || 0
 
     const comandosSub = help.map(menu => {
       return menu.help.map(h => {
         const cmd = menu.prefix ? h : `${_p}${h}`
-        const limit = menu.limit ? '🔒' : '🔓'
-        const premium = menu.premium ? '💎' : '🆓'
-        return `  ${cmd}\n  ➥ ${menu.desc} ${limit} ${premium}`
+        return `  ${cmd}\n  ➥ ${menu.desc}`
       }).join('\n')
     }).filter(Boolean).join('\n\n')
 
@@ -57,9 +52,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   📌 Creados hoy: ${Math.floor(Math.random() * 5) + 1} (simulado)
 
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸𓉳
-     🇸 🇺 🇧  🇧 🇴 🇹 🇸 
-    ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
+
 `
 
     const after = `
