@@ -5,7 +5,6 @@ import { fileTypeFromBuffer } from 'file-type'
 
 const API_BASE = 'https://dv-yer-api.online/mediafire'
 const API_KEY = 'dvyer506422062605'
-const MAX_TAMANO_DIRECTO = 200 * 1024 * 1024 // 200 MB
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (!text) {
@@ -62,7 +61,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     ])
 
     if (!res.ok) {
-      throw new Error(`HTTP ${res.status} ${res.statusText}`)
+      throw new Error(`HTTP ${res.status}`)
     }
 
     const data = await res.json()
@@ -76,53 +75,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     const extension = data.extension || path.extname(nombre).slice(1) || 'bin'
     const tipo = data.format || 'Archivo'
     const enlaceDescarga = data.download_url
-
-    // Parsear tamaño a bytes
-    let tamanoBytes = 0
-    if (typeof tamanoTexto === 'string') {
-      const match = tamanoTexto.match(/^([\d.]+)\s*(KB|MB|GB|B)$/i)
-      if (match) {
-        const num = parseFloat(match[1])
-        const unit = match[2].toUpperCase()
-        if (unit === 'B') tamanoBytes = num
-        else if (unit === 'KB') tamanoBytes = num * 1024
-        else if (unit === 'MB') tamanoBytes = num * 1024 * 1024
-        else if (unit === 'GB') tamanoBytes = num * 1024 * 1024 * 1024
-      } else {
-        const clean = tamanoTexto.replace(/\s/g, '')
-        const numMatch = clean.match(/^([\d.]+)/)
-        if (numMatch) {
-          const num = parseFloat(numMatch[1])
-          if (clean.includes('GB')) tamanoBytes = num * 1024 * 1024 * 1024
-          else if (clean.includes('MB')) tamanoBytes = num * 1024 * 1024
-          else if (clean.includes('KB')) tamanoBytes = num * 1024
-          else tamanoBytes = num
-        }
-      }
-    }
-
-    if (tamanoBytes > MAX_TAMANO_DIRECTO) {
-      await conn.sendMessage(m.chat, {
-        text: [
-          `╔══〔 📂 *THEELY-MD — MEDIAFIRE* 〕══╗`,
-          `║`,
-          `║ ✅ *Archivo encontrado*`,
-          `║`,
-          `║ 📄 *Nombre:* ${nombre.slice(0, 50)}`,
-          `║ 📦 *Tamaño:* ${tamanoTexto}`,
-          `║ 🗂️ *Tipo:* ${tipo}`,
-          `║`,
-          `║ ⚠️ *Excede el límite de envío directo*`,
-          `║ 📥 *Descarga aquí:*`,
-          `║ ${enlaceDescarga}`,
-          `║`,
-          `║ 💫 *Powered by TheEly-MD 🌼*`,
-          `╚══════════════════════════════════╝`
-        ].join('\n')
-      }, { quoted: m })
-      await m.react('✅')
-      return
-    }
 
     await conn.sendMessage(m.chat, {
       text: [
@@ -145,7 +97,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       fetch(enlaceDescarga, {
         headers: { 'user-agent': 'TheEly-MD' }
       }),
-      new Promise((_, rej) => setTimeout(() => rej('timeout'), 30000))
+      new Promise((_, rej) => setTimeout(() => rej('timeout'), 60000))
     ])
 
     if (!fileRes.ok) {
@@ -155,7 +107,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     const buffer = Buffer.from(await fileRes.arrayBuffer())
     fs.writeFileSync(filePath, buffer)
 
-    // Detectar tipo MIME real
     let mimeType = 'application/octet-stream'
     let tipoArchivoEnvio = 'document'
     try {
