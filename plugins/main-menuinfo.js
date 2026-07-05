@@ -15,8 +15,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
         help: Array.isArray(p.help) ? p.help : [p.help],
         tags: Array.isArray(p.tags) ? p.tags : [p.tags],
         prefix: 'customPrefix' in p,
-        limit: p.limit,
-        premium: p.premium,
         desc: p.desc || p.description || 'Sin descripción'
       }))
 
@@ -37,9 +35,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const comandosInfo = help.map(menu => {
       return menu.help.map(h => {
         const cmd = menu.prefix ? h : `${_p}${h}`
-        const limit = menu.limit ? '🔒' : '🔓'
-        const premium = menu.premium ? '💎' : '🆓'
-        return `  ${cmd}\n  ➥ ${menu.desc} ${limit} ${premium}`
+        return `  • *${cmd}*\n    ➥ ${menu.desc}`
       }).join('\n')
     }).filter(Boolean).join('\n\n')
 
@@ -60,8 +56,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   👥 Usuarios registrados: ${Object.keys(global.db.data.users || {}).length}
 
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸𓉳
- 🇮 🇳 🇫 🇴 🇷 🇲 🇦 🇨 🇮 🇴 🇳 
+  𓏲𝐂𝐎𝐌𝐀𝐍𝐃𝐎𝐒 𝐈𝐍𝐅𝐎/𝐔𝐒𝐔𝐀𝐑𝐈𝐎/𝐁𝐎𝐓
     ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
 `
 
