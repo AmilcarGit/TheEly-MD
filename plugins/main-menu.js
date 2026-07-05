@@ -81,22 +81,22 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     `.trim()
 
     const rows = [
-      { title: '🎮 𝗝𝘂𝗲𝗴𝗼𝘀', id: '.menu5' },
-      { title: '🧠 𝗜𝗻𝘁𝗲𝗹𝗶𝗴𝗲𝗻𝗰𝗶𝗮 𝗔𝗿𝘁𝗶𝗳𝗶𝗰𝗶𝗮𝗹', id: '.menua' },
-      { title: '🎨 𝗗𝗶𝘃𝗲𝗿𝘀𝗶𝗼𝗻', id: '.menufun' },
-      { title: '🂽 𝙀𝙨𝙩𝙪𝙙𝙞𝙤 / 𝙀𝙨𝙘𝙪𝙚𝙡𝙖', id: '.menu3' },
-      { title: '𖡹 𝙂𝙖𝙘𝙝𝙖', id: '.menu4' },
-      { title: '💰 𝙀𝙘𝙤𝙣𝙤𝙢𝙞́𝙖', id: '.menu2' },
-      { title: '✎ 𝘿𝙚𝙨𝙘𝙖𝙧𝙜𝙖𝙨', id: '.menu1' },
-      { title: '♨️ 𝙂𝙧𝙪𝙥𝙤𝙨 / 𝘼𝙙𝙢𝙞𝙣', id: '.menu6' },
-      { title: '☕ 𝙊𝙬𝙣𝙚𝙧 / 𝘾𝙧𝙚𝙖𝙙𝙤𝙧', id: '.menucreador' },
-      { title: '𖥸 𝙎𝙩𝙞𝙘𝙠𝙚𝙧𝙨', id: '.menusticker' },
-      { title: '☯️ 𝘽𝙪𝙨𝙘𝙖𝙙𝙤𝙧𝙚𝙨', id: '.menu8' },
-      { title: '📊 𝙄𝙣𝙛𝙤𝙧𝙢𝙖𝙘𝙞𝙤́𝙣', id: '.menu7' },
-      { title: '☘️ 𝙎𝙪𝙗-𝘽𝙤𝙩𝙨', id: '.menu9' },
-      { title: '☢️ 𝙃𝙚𝙧𝙧𝙖𝙢𝙞𝙚𝙣𝙩𝙖𝙨', id: '.menu10' },
-      { title: '꒷ 𝙈𝙪𝙡𝙩𝙞𝙟𝙪𝙜𝙖𝙙𝙤𝙧', id: '.multiplayer' },
-      { title: '🌼 𝙈𝙚𝙣𝙪 𝙋𝙧𝙞𝙣𝙘𝙞𝙥𝙖𝙡', id: '.menu' }
+      { title: '🎮 𝗝𝘂𝗲𝗴𝗼𝘀', description: 'Minijuegos y retos para divertirte', id: '.menu5' },
+      { title: '🧠 𝗜𝗻𝘁𝗲𝗹𝗶𝗴𝗲𝗻𝗰𝗶𝗮 𝗔𝗿𝘁𝗶𝗳𝗶𝗰𝗶𝗮𝗹', description: 'Chatea con IA, genera imágenes y más', id: '.menua' },
+      { title: '🎨 𝗗𝗶𝘃𝗲𝗿𝘀𝗶𝗼𝗻', description: 'Comandos random para pasar el rato', id: '.menufun' },
+      { title: '🂽 𝙀𝙨𝙩𝙪𝙙𝙞𝙤 / 𝙀𝙨𝙘𝙪𝙚𝙡𝙖', description: 'Herramientas para tareas y aprender', id: '.menu3' },
+      { title: '𖡹 𝙂𝙖𝙘𝙝𝙖', description: 'Tiradas, personajes y colecciones', id: '.menu4' },
+      { title: '💰 𝙀𝙘𝙤𝙣𝙤𝙢𝙞́𝙖', description: 'Monedas, banco y comandos de dinero', id: '.menu2' },
+      { title: '✎ 𝘿𝙚𝙨𝙘𝙖𝙧𝙜𝙖𝙨', description: 'Música, videos, APKs y stickers', id: '.menu1' },
+      { title: '♨️ 𝙂𝙧𝙪𝙥𝙤𝙨 / 𝘼𝙙𝙢𝙞𝙣', description: 'Moderación y administración de grupos', id: '.menu6' },
+      { title: '☕ 𝙊𝙬𝙣𝙚𝙧 / 𝘾𝙧𝙚𝙖𝙙𝙤𝙧', description: 'Control y configuración del bot', id: '.menucreador' },
+      { title: '𖥸 𝙎𝙩𝙞𝙘𝙠𝙚𝙧𝙨', description: 'Crea y edita tus propios stickers', id: '.menusticker' },
+      { title: '☯️ 𝘽𝙪𝙨𝙘𝙖𝙙𝙤𝙧𝙚𝙨', description: 'Busca imágenes, videos y más en la web', id: '.menu8' },
+      { title: '📊 𝙄𝙣𝙛𝙤𝙧𝙢𝙖𝙘𝙞𝙤́𝙣', description: 'Estado, estadísticas y datos del bot', id: '.menu7' },
+      { title: '☘️ 𝙎𝙪𝙗-𝘽𝙤𝙩𝙨', description: 'Crea y administra tu propio sub-bot', id: '.menu9' },
+      { title: '☢️ 𝙃𝙚𝙧𝙧𝙖𝙢𝙞𝙚𝙣𝙩𝙖𝙨', description: 'Utilidades varias del sistema', id: '.menu10' },
+      { title: '꒷ 𝙈𝙪𝙡𝙩𝙞𝙟𝙪𝙜𝙖𝙙𝙤𝙧', description: 'Juegos para varios usuarios a la vez', id: '.multiplayer' },
+      { title: '🌼 𝙈𝙚𝙣𝙪 𝙋𝙧𝙞𝙣𝙘𝙞𝙥𝙖𝙡', description: 'Vuelve a esta pantalla principal', id: '.menu' }
     ]
 
     let imageMessage = null
