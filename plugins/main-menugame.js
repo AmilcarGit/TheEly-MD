@@ -15,8 +15,6 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
         help: Array.isArray(p.help) ? p.help : [p.help],
         tags: Array.isArray(p.tags) ? p.tags : [p.tags],
         prefix: 'customPrefix' in p,
-        limit: p.limit,
-        premium: p.premium,
         desc: p.desc || p.description || 'Sin descripción'
       }))
 
@@ -38,9 +36,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
     const comandosGame = help.map(menu => {
       return menu.help.map(h => {
         const cmd = menu.prefix ? h : `${_p}${h}`
-        const limit = menu.limit ? '🔒' : '🔓'
-        const premium = menu.premium ? '💎' : '🆓'
-        return `  ${cmd}\n  ➥ ${menu.desc} ${limit} ${premium}`
+        return `  • *${cmd}*\n    ➥ ${menu.desc}`
       }).join('\n')
     }).filter(Boolean).join('\n\n')
 
@@ -59,8 +55,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ✨ Experiencia: ${userExp}
 
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
-  𓏲🇨 🇴 🇲 🇦 🇳 🇩 🇮 🇹 🇴 🇸𓉳
-          🇬 🇦 🇲 🇪 
+  𓏲𝐂𝐎𝐌𝐀𝐍𝐃𝐎𝐒 𝐆𝐀𝐌𝐄/𝐉𝐔𝐄𝐆𝐎𝐒
     ✐☡✐☡✐☡✐☡✐☡✐☡✐☡✐☡
 `
 
@@ -68,12 +63,7 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ˏ⸉ˋ‿̩͙‿̩̩̽‿̩͙‿̩̥̩‿̩̩̽‿̩͙‿̩͙‿̩̩̽‿̩͙‿̩͙‿̩̩̽‿̩͙‿̩̥̩‿̩̩̽‿̩͙‘⸊ˎ
 
   𖥸 𝗧 𝗛 𝗘 𝗘 𝗟 𝗬 𖧷 𝗠 𝗗⇱
-
-  _╭ᵇᵒᵗ ᴺᵘᵉᵛᵒ ᵉⁿ ᵗᵘ ʷʰᵃᵗˢᵃᵖᵖ╮_
-       ᵈᵉˢᵃʳʳᵒˡˡᵃᵈᵒ ᵖᵒʳ
-    ٭ᴀ ᴍ ɪ ʟ ᴄ ᴀ ʀ ɢ ɪ ᴛ
- 𝑐𝑜𝑛𝑡𝑎𝑐𝑡𝑜: 51910227479 ⃝⃟
- ┈┈┈┈․° ☣ °․┈┈┈┈
+     ┈┈┈┈․° ☣ °․┈┈┈┈
 
   ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
   💡 Usa .menu para ver todos los comandos
