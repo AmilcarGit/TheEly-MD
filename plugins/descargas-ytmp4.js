@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 import fs from 'fs'
 import path from 'path'
+import { pipeline } from 'stream/promises'
 import {
   generateWAMessageFromContent,
   prepareWAMessageMedia,
@@ -8,9 +9,16 @@ import {
 } from '@whiskeysockets/baileys'
 
 let pendientes = {}
-const API_URL    = 'https://api.delirius.store/download/ytmp4'
-const API_KEY    = 'TheEly-MD'
-const BASE_API   = 'https://dv-edward.onrender.com'
+const API_URL  = 'https://api.delirius.store/download/ytmp4'
+const API_KEY  = 'TheEly-MD'
+const BASE_API = 'https://dv-edward.onrender.com'
+const TIMEOUT_MS = 45000
+
+function fetchConTimeout(url, options = {}) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS)
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timer))
+}
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (!text) return m.reply([
@@ -26,7 +34,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   const query  = text.trim()
   const isLink = query.includes('youtu.be') || query.includes('youtube.com')
 
-  await m.react('🎬')
+  await m.react('⏳')
 
   try {
     if (isLink) {
@@ -34,12 +42,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       return
     }
 
-    await conn.sendMessage(m.chat, {
-      text: `╔══〔 🌼 *THEELY-MD — YTMP4* 〕══╗\n║\n║ 🔎 Buscando: *${query}*\n║ ⏳ Por favor espera~\n║\n╚══════════════════════════════════╝`
-    }, { quoted: m })
-
     const searchUrl = `${BASE_API}/api/search/youtube?apiKey=${API_KEY}&query=${encodeURIComponent(query)}`
-    const res  = await fetch(searchUrl, {
+    const res  = await fetchConTimeout(searchUrl, {
       headers: { 'accept': 'application/json', 'user-agent': 'Mozilla/5.0' }
     })
     const json = await res.json()
@@ -138,50 +142,40 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 }
 
 async function procesarVideo(m, conn, url) {
+  let videoPath = null
   try {
-    await conn.sendMessage(m.chat, {
-      text: `╔══〔 🌼 *THEELY-MD — YTMP4* 〕══╗\n║\n║ ⏳ *Procesando video...*\n║ 💡 Esto puede tardar unos segundos~\n║\n╚══════════════════════════════════╝`
-    }, { quoted: m })
-
-    const res  = await fetch(`${API_URL}?url=${encodeURIComponent(url)}`)
+    const res  = await fetchConTimeout(`${API_URL}?url=${encodeURIComponent(url)}`)
     const data = await res.json()
 
     if (!data.status) throw new Error(data.error || 'Error al obtener el video')
 
-    const { title, image: thumbnail, download } = data.data
+    const { title, download } = data.data
 
     const tmpDir = path.join(process.cwd(), 'tmp')
     if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true })
 
-    const videoPath = path.join(tmpDir, `${Date.now()}.mp4`)
-    const videoRes  = await fetch(download)
-    fs.writeFileSync(videoPath, Buffer.from(await videoRes.arrayBuffer()))
+    videoPath = path.join(tmpDir, `${Date.now()}.mp4`)
+
+    const videoRes = await fetchConTimeout(download)
+    if (!videoRes.ok || !videoRes.body) throw new Error('No se pudo descargar el video')
+
+    await pipeline(videoRes.body, fs.createWriteStream(videoPath))
 
     await conn.sendMessage(m.chat, {
-      document: fs.readFileSync(videoPath),
+      document: { url: videoPath },
       mimetype: 'video/mp4',
-      fileName: `${title}.mp4`
+      fileName: `${title}.mp4`,
+      caption: `✅ *${title}*\n💫 Powered by THEELY-MD 🌼`
     }, { quoted: m })
 
-    await conn.sendMessage(m.chat, {
-      text: [
-        `╔══〔 🌼 *THEELY-MD — YTMP4* 〕══╗`,
-        `║`,
-        `║ ✅ *¡Video enviado!*`,
-        `║ 🎬 *${title}*`,
-        `║`,
-        `║ 💫 *Powered by API Edward🌼*`,
-        `╚══════════════════════════════════╝`
-      ].join('\n')
-    }, { quoted: m })
-
-    fs.unlinkSync(videoPath)
     await m.react('✅')
 
   } catch (e) {
     console.error('❌ Error en descarga de video:', e.message)
     await m.react('❌')
     m.reply(`❌ Error al procesar el video~\n💡 Verifica que el enlace sea válido`)
+  } finally {
+    if (videoPath) fs.promises.unlink(videoPath).catch(() => {})
   }
 }
 
@@ -211,6 +205,7 @@ handler.before = async (m, { conn }) => {
       if (!video) return true
 
       delete pendientes[chatId]
+      await m.react('⏳')
       await procesarVideo(m, conn, video.url)
       return true
     }
