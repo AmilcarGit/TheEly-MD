@@ -187,7 +187,7 @@ async function procesarDescarga(m, conn, url) {
         `║ ✅ *¡Audio enviado!*`,
         `║ 🎵 *${title.slice(0, 60)}*`,
         `║`,
-        `║ 💫 *Powered by TheEly-MD 🌼*`,
+        `║ 💫 *Powered by API Elvigilante🌼*`,
         `╚══════════════════════════════════╝`
       ].join('\n')
     }, { quoted: m })
