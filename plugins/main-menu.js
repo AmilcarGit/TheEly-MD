@@ -52,6 +52,17 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
 
     const texto = `
  ❛ ━━━━━━･❪ 🌼 ❫ ･━━━━━━ ❜
+   🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
+ ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊ ♡ °̩̥˚̩̩̥͙°̩̥ ·͙*̩̩͙˚̩̥̩̥*̩̩̥͙·̩̩̥͙*̩̩̥͙˚̩̥̩̥*̩̩͙‧͙ °̩̥˚̩̩̥͙°̩̥ ♡ ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊
+
+  🌼 *¡Hola,* *${name}!* 
+   ${getGreeting(horaPeru.getHours())}
+
+  📊 *TU PROGRESO:*
+  💰 ${moneda}: ${userCoins}
+  🏦 Banco: ${userBank}
+  ✨ Experiencia: ${userExp}
+
  ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 ☽༓･*˚⁺‧͙ 
   ║☞ 🤖  𝑩𝒐𝒕☻        ${nombreBot}
   ║☞ 🏷️  𝑴𝒐𝒅𝒐☻      ${tipo}
@@ -61,95 +72,31 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   ║☞ 👤  𝑼𝒔𝒖𝒂𝒓𝒊𝒐𝒔☻  ${totalUsuarios}
   ❀•°•═════ஓ๑♡๑ஓ═════•°•❀
 
-  𓏲📂 *C A T E G O R Í A S* 𓅂
+  𓏲📂 *C A T E G O R Í A S* 𓉳
 
-  📌 *Selecciona una opción en el menu.*
+  📌 *Selecciona una opción en el menú desplegable.*
+  💡 *Los comandos también funcionan escribiéndolos.*
 
-  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗
-         ᵇᵒᵗ ᵉⁿ ᵈᵉˢᵃʳʳᵒˡˡᵃᵈᵒ★_
+  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
     `.trim()
 
     const rows = [
-      { 
-        title: '🎮 𝗝𝘂𝗲𝗴𝗼𝘀', 
-        description: '🎲 Juega y gana premios en el bot',
-        id: '.menu5' 
-      },
-      { 
-        title: '🧠 𝗜𝗻𝘁𝗲𝗹𝗶𝗴𝗲𝗻𝗰𝗶𝗮 𝗔𝗿𝘁𝗶𝗳𝗶𝗰𝗶𝗮𝗹', 
-        description: '🤖 Chatea con IA avanzada y resuelve dudas',
-        id: '.menua' 
-      },
-      { 
-        title: '🎨 𝗗𝗶𝘃𝗲𝗿𝘀𝗶𝗼𝗻', 
-        description: '😂 Memes, chistes, frases y más para pasar el rato',
-        id: '.menufun' 
-      },
-      { 
-        title: '🂽 𝙀𝙨𝙩𝙪𝙙𝙞𝙤 / 𝙀𝙨𝙘𝙪𝙚𝙡𝙖', 
-        description: '📚 Herramientas educativas y de aprendizaje',
-        id: '.menu3' 
-      },
-      { 
-        title: '𖡹 𝙂𝙖𝙘𝙝𝙖', 
-        description: '🎲 Sistema de personajes y colecciones',
-        id: '.menu4' 
-      },
-      { 
-        title: '💰 𝙀𝙘𝙤𝙣𝙤𝙢𝙞́𝙖', 
-        description: '💵 Gestiona tus monedas, banco y tienda',
-        id: '.menu2' 
-      },
-      { 
-        title: '✎ 𝘿𝙚𝙨𝙘𝙖𝙧𝙜𝙖𝙨', 
-        description: '📥 Descarga música, videos, stickers y más',
-        id: '.menu1' 
-      },
-      { 
-        title: '♨️ 𝙂𝙧𝙪𝙥𝙤𝙨 / 𝘼𝙙𝙢𝙞𝙣', 
-        description: '⚙️ Herramientas para administrar grupos',
-        id: '.menu6' 
-      },
-      { 
-        title: '☕ 𝙊𝙬𝙣𝙚𝙧 / 𝘾𝙧𝙚𝙖𝙙𝙤𝙧', 
-        description: '👑 Comandos exclusivos para el creador del bot',
-        id: '.menucreador' 
-      },
-      { 
-        title: '𖥸 𝙎𝙩𝙞𝙘𝙠𝙚𝙧𝙨', 
-        description: '🖼️ Crea y obtén stickers personalizados',
-        id: '.menusticker' 
-      },
-      { 
-        title: '☯️ 𝘽𝙪𝙨𝙘𝙖𝙙𝙤𝙧𝙚𝙨', 
-        description: '🔍 Busca contenido en internet desde el bot',
-        id: '.menu8' 
-      },
-      { 
-        title: '📊 𝙄𝙣𝙛𝙤𝙧𝙢𝙖𝙘𝙞𝙤́𝙣', 
-        description: 'ℹ️ Estado del bot, usuarios y estadísticas',
-        id: '.menu7' 
-      },
-      { 
-        title: '☘️ 𝙎𝙪𝙗-𝘽𝙤𝙩𝙨', 
-        description: '🤖 Crea y gestiona tus propios Sub-Bots',
-        id: '.menu9' 
-      },
-      { 
-        title: '☢️ 𝙃𝙚𝙧𝙧𝙖𝙢𝙞𝙚𝙣𝙩𝙖𝙨', 
-        description: '🛠️ Utilidades varias para el día a día',
-        id: '.menu10' 
-      },
-      { 
-        title: '꒷ 𝙈𝙪𝙡𝙩𝙞𝙟𝙪𝙜𝙖𝙙𝙤𝙧', 
-        description: '👥 Juegos multijugador para compartir con amigos',
-        id: '.multiplayer' 
-      },
-      { 
-        title: '🌼 𝙈𝙚𝙣𝙪 𝙋𝙧𝙞𝙣𝙘𝙞𝙥𝙖𝙡', 
-        description: '📌 Volver al menú principal',
-        id: '.menu' 
-      }
+      { title: '🎮 𝗝𝘂𝗲𝗴𝗼𝘀', id: '.menu5' },
+      { title: '🧠 𝗜𝗻𝘁𝗲𝗹𝗶𝗴𝗲𝗻𝗰𝗶𝗮 𝗔𝗿𝘁𝗶𝗳𝗶𝗰𝗶𝗮𝗹', id: '.menua' },
+      { title: '🎨 𝗗𝗶𝘃𝗲𝗿𝘀𝗶𝗼𝗻', id: '.menufun' },
+      { title: '🂽 𝙀𝙨𝙩𝙪𝙙𝙞𝙤 / 𝙀𝙨𝙘𝙪𝙚𝙡𝙖', id: '.menu3' },
+      { title: '𖡹 𝙂𝙖𝙘𝙝𝙖', id: '.menu4' },
+      { title: '💰 𝙀𝙘𝙤𝙣𝙤𝙢𝙞́𝙖', id: '.menu2' },
+      { title: '✎ 𝘿𝙚𝙨𝙘𝙖𝙧𝙜𝙖𝙨', id: '.menu1' },
+      { title: '♨️ 𝙂𝙧𝙪𝙥𝙤𝙨 / 𝘼𝙙𝙢𝙞𝙣', id: '.menu6' },
+      { title: '☕ 𝙊𝙬𝙣𝙚𝙧 / 𝘾𝙧𝙚𝙖𝙙𝙤𝙧', id: '.menucreador' },
+      { title: '𖥸 𝙎𝙩𝙞𝙘𝙠𝙚𝙧𝙨', id: '.menusticker' },
+      { title: '☯️ 𝘽𝙪𝙨𝙘𝙖𝙙𝙤𝙧𝙚𝙨', id: '.menu8' },
+      { title: '📊 𝙄𝙣𝙛𝙤𝙧𝙢𝙖𝙘𝙞𝙤́𝙣', id: '.menu7' },
+      { title: '☘️ 𝙎𝙪𝙗-𝘽𝙤𝙩𝙨', id: '.menu9' },
+      { title: '☢️ 𝙃𝙚𝙧𝙧𝙖𝙢𝙞𝙚𝙣𝙩𝙖𝙨', id: '.menu10' },
+      { title: '꒷ 𝙈𝙪𝙡𝙩𝙞𝙟𝙪𝙜𝙖𝙙𝙤𝙧', id: '.multiplayer' },
+      { title: '🌼 𝙈𝙚𝙣𝙪 𝙋𝙧𝙞𝙣𝙘𝙞𝙥𝙖𝙡', id: '.menu' }
     ]
 
     let imageMessage = null
@@ -179,14 +126,13 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
             body: { text: texto },
             footer: { text: '𝚃𝙷𝙴𝙴𝙻𝚈-𝙼𝙳  ·  𝙲𝚘𝚖𝚊𝚗𝚍𝚘𝚜 𝙾𝚏𝚒𝚌𝚒𝚊𝚕𝚎𝚜' },
             nativeFlowMessage: {
-              buttons: [
-                {
-                  name: 'single_select',
-                  buttonParamsJson: JSON.stringify({
-                    title: '📂 SELECCIONA UNA CATEGORÍA',
-                    sections: [{
-                      title: '🔽 Elige una opción',
-                      rows
+              buttons: [{
+                name: 'single_select',
+                buttonParamsJson: JSON.stringify({
+                  title: '📂 SELECCIONA UNA CATEGORÍA',
+                  sections: [{
+                    title: '🔽 Elige una opción',
+                    rows
                     }]
                   })
                 },
@@ -217,50 +163,113 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
 handler.before = async (m, { conn }) => {
   const flow = m.message?.interactiveResponseMessage?.nativeFlowResponseMessage
   if (!flow) return
-
+  const nombreBot = global.namebot || 'TheEly-MD'
   try {
     const data = JSON.parse(flow.paramsJson || '{}')
     const id = data.id
     if (!id) return
-
     if (id.startsWith('.')) {
       const cmdName = id.slice(1)
       const plugin = global.plugins ? Object.values(global.plugins).find(p => {
-        if (p.command) {
+        if (p?.command) {
           const cmds = Array.isArray(p.command) ? p.command : [p.command]
           return cmds.includes(cmdName)
         }
         return false
       }) : null
-
-      if (plugin && typeof plugin.handler === 'function') {
+      if (typeof plugin === 'function') {
         const fakeM = {
           ...m,
           text: id,
           body: id,
           quoted: m.quoted || null
         }
-        await plugin.handler(fakeM, { conn, text: cmdName, usedPrefix: '.', command: cmdName })
-        return true
-      } else {
-        const fakeMessage = {
-          key: {
-            remoteJid: m.chat,
-            fromMe: false,
-            id: 'fake-' + Date.now()
-          },
-          message: {
-            conversation: id
-          },
-          pushName: 'Usuario',
-          sender: m.sender
+        const detectwhat = m.sender.includes('@lid') ? '@lid' : '@s.whatsapp.net'
+        const isROwner = [...global.owner.map(([number]) => number)]
+          .map(v => v.replace(/[^0-9]/g, '') + detectwhat)
+          .includes(m.sender)
+        const isOwner = isROwner || m.fromMe
+        const isMods = isROwner || (global.mods || [])
+          .map(v => v.replace(/[^0-9]/g, '') + detectwhat)
+          .includes(m.sender)
+        const _user = global.db.data?.users?.[m.sender]
+        const isPrems = isROwner ||
+          (global.prems || []).map(v => v.replace(/[^0-9]/g, '') + detectwhat).includes(m.sender) ||
+          _user?.premium === true
+
+        const chatDB = global.db.data?.chats?.[m.chat]
+        const userDB = global.db.data?.users?.[m.sender]
+
+        if (chatDB?.isBanned && !isROwner) return true
+        if (userDB?.banned && !isROwner) {
+          await conn.reply(m.chat, [
+            `╔══〔 🌼 *${nombreBot}* 〕══╗`,
+            `║`,
+            `║ 🔴 *Estás baneado/a~*`,
+            `║ No puedes usar comandos.`,
+            `║`,
+            `╚══════════════════════╝`
+          ].join('\n'), m)
+          return true
         }
-        conn.ev.emit('messages.upsert', {
-          messages: [fakeMessage],
-          type: 'notify'
+
+        let isAdmin = false, isBotAdmin = false
+        if (m.isGroup) {
+          try {
+            const groupMetadata = await conn.groupMetadata(m.chat)
+            const participants = groupMetadata?.participants || []
+            const userP = participants.find(p => p.id === m.sender) || {}
+            const botP = participants.find(p => p.id === conn.user?.jid) || {}
+            isAdmin = userP.admin === 'admin' || userP.admin === 'superadmin'
+            isBotAdmin = !!botP.admin
+          } catch {}
+        }
+
+        const denegar = async (tipo) => {
+          if (typeof global.dfail === 'function') {
+            await global.dfail(tipo, m, conn, '.', cmdName)
+          } else {
+            await conn.reply(m.chat, '🔒 No tienes permiso para usar esta opción~', m)
+          }
+          return true
+        }
+
+        if (plugin.rowner && plugin.owner && !(isROwner || isOwner)) return denegar('owner')
+        if (plugin.rowner && !isROwner) return denegar('rowner')
+        if (plugin.owner && !isOwner) return denegar('owner')
+        if (plugin.mods && !isMods) return denegar('mods')
+        if (plugin.premium && !isPrems) return denegar('premium')
+        if (plugin.group && !m.isGroup) return denegar('group')
+        else if (plugin.botAdmin && !isBotAdmin) return denegar('botAdmin')
+        else if (plugin.admin && !isAdmin) return denegar('admin')
+        if (plugin.private && m.isGroup) return denegar('private')
+        if (plugin.register === true && _user?.registered === false) return denegar('unreg')
+
+        await plugin(fakeM, {
+          conn,
+          text: '',
+          args: [],
+          usedPrefix: '.',
+          command: cmdName,
+          isROwner,
+          isOwner,
+          isAdmin,
+          isBotAdmin,
+          isMods,
+          isPrems
         })
         return true
       }
+      await conn.reply(m.chat, [
+        `╔══〔 🌼 *${nombreBot}* 〕══╗`,
+        `║`,
+        `║ ❌ *Opción no disponible~*`,
+        `║ El comando *${id}* ya no`,
+        `║ existe o fue removido~`,
+        `║`,
+        `╚══════════════════════╝`
+      ].join('\n'), m)
+      return true
     }
   } catch (e) {
     console.error('❌ Error procesando botón del menú:', e)
