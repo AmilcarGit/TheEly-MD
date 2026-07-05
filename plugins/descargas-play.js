@@ -6,7 +6,7 @@ import {
   proto
 } from '@whiskeysockets/baileys'
 
-const API_KEY  = 'edward123'
+const API_KEY  = 'TheEly-MD'
 const BASE_API = 'https://dv-edward.onrender.com'
 
 let pendientes = {}
