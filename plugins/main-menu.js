@@ -67,12 +67,11 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
   𓏲📂 *C A T E G O R Í A S* 𓉳
 
   📌 *Selecciona una opción en el menú desplegable.*
-  💡 *Los comandos también funcionan escribiéndolos.*
 
-  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
+  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗
+         ᵇᵒᵗ ᵉⁿ ᵈᵉˢᵃʳʳᵒˡˡᵃᵈᵒ★_
     `.trim()
 
-    // ========== BOTONES CON DESCRIPCIONES ==========
     const rows = [
       { 
         title: '🎮 𝗝𝘂𝗲𝗴𝗼𝘀', 
