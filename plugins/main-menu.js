@@ -52,18 +52,11 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
 
     const texto = `
  ❛ ━━━━━━･❪ 🌼 ❫ ･━━━━━━ ❜
-   🂡𝐓 𝐇 𝐄 𝐄 𝐋 𝐘 𓆆 𝐌 𝐃
- ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊ ♡ °̩̥˚̩̩̥͙°̩̥ ·͙*̩̩͙˚̩̥̩̥*̩̩̥͙·̩̩̥͙*̩̩̥͙˚̩̥̩̥*̩̩͙‧͙ °̩̥˚̩̩̥͙°̩̥ ♡ ‧̍̊·̊‧̥°̩̥˚̩̩̥͙°̩̥‧̥·̊‧̍̊
-
+       ↻ ◁ II ▷ ↺
   🌼 *¡Hola,* *${name}!* 
    ${getGreeting(horaPeru.getHours())}
 
-  📊 *TU PROGRESO:*
-  💰 ${moneda}: ${userCoins}
-  🏦 Banco: ${userBank}
-  ✨ Experiencia: ${userExp}
-
- ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 ☽༓･*˚⁺‧͙ 
+   ‧͙⁺˚*･༓☾ 𝑻𝒉𝒆𝑬𝒍𝒚-𝑴𝑫 ☽༓･*˚⁺‧͙ 
   ║☞ 🤖  𝑩𝒐𝒕☻        ${nombreBot}
   ║☞ 🏷️  𝑴𝒐𝒅𝒐☻      ${tipo}
   ║☞ 📅  𝑭𝒆𝒄𝒉𝒂☻     ${date}
@@ -74,11 +67,10 @@ const handler = async (m, { conn, usedPrefix: _p }) => {
 
   𓏲📂 *C A T E G O R Í A S* 𓉳
 
-  📌 *Selecciona una opción en el menú desplegable.*
-  💡 *Los comandos también funcionan escribiéndolos.*
+  📌 *Selecciona una opción en el menú.*
 
-  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵𝗲𝗘𝗹𝘆-𝗠𝗗 ⃝_
-    `.trim()
+  ✨ _𝗚𝗥𝗔𝗖𝗜𝗔𝗦 𝗣𝗢𝗥 𝗨𝗦𝗔𝗥 𝗧𝗵e𝗘𝗹𝘆-𝗠𝗗_
+       ᵇᵒᵗ ᵉⁿ ᵈᵉˢᵃʳʳᵒˡˡᵃᵈᵒ`.trim()
 
     const rows = [
       { title: '🎮 𝗝𝘂𝗲𝗴𝗼𝘀', description: 'Minijuegos y retos para divertirte', id: '.menu5' },
