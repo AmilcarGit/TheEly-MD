@@ -116,7 +116,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         ...(imageMessage && { imageMessage })
       },
       body: { text: bodyText },
-      footer: { text: '💫 Powered by TheEly-MD 🌼' },
+      footer: { text: '💫 Powered by API Edward 🌼' },
       nativeFlowMessage: {
         buttons: [{
           name: 'single_select',
@@ -187,7 +187,7 @@ async function procesarDescarga(m, conn, url) {
         `║ ✅ *¡Audio enviado!*`,
         `║ 🎵 *${title.slice(0, 60)}*`,
         `║`,
-        `║ 💫 *Powered by API Elvigilante🌼*`,
+        `║ 💫 *Powered by API Edward🌼*`,
         `╚══════════════════════════════════╝`
       ].join('\n')
     }, { quoted: m })
