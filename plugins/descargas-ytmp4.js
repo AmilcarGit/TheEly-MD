@@ -10,10 +10,14 @@ import {
 
 let pendientes = {}
 
-const API_URL = 'https://dv-yer-api.online/ytmp4'
+// ===== CONFIGURACIÓN =====
+const API_DESCARGAR = 'https://dv-yer-api.online/ytmp4'
 const API_KEY = 'dvyer673989047548'
 const QUALITY = '360p'
-const SEARCH_API = 'https://dv-yer-api.online/api/search/youtube'
+
+// API de búsqueda (Delirius, que funciona)
+const BUSQUEDA_API = 'https://api.delirius.store/search/youtube'
+
 const TIMEOUT_MS = 45000
 
 function fetchConTimeout(url, options = {}) {
@@ -44,11 +48,14 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       return
     }
 
-    const searchUrl = `${SEARCH_API}?apiKey=${API_KEY}&query=${encodeURIComponent(query)}`
+    // ===== BÚSQUEDA CON DELIRIUS =====
+    console.log(`🔍 Buscando: ${query}`)
+    const searchUrl = `${BUSQUEDA_API}?query=${encodeURIComponent(query)}`
     const res = await fetchConTimeout(searchUrl, {
       headers: { 'accept': 'application/json', 'user-agent': 'Mozilla/5.0' }
     })
     const json = await res.json()
+    console.log('📦 Respuesta búsqueda:', JSON.stringify(json, null, 2))
 
     if (!json.status || !Array.isArray(json.data) || json.data.length === 0) {
       await m.react('❌')
@@ -143,16 +150,18 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 }
 
+// ===== DESCARGA DE VIDEO USANDO LA NUEVA API =====
 async function procesarVideo(m, conn, url) {
   let videoPath = null
   try {
-    const apiUrl = `${API_URL}?mode=link&url=${encodeURIComponent(url)}&quality=${QUALITY}&apikey=${API_KEY}`
-    console.log('📡 API URL:', apiUrl)
+    const apiUrl = `${API_DESCARGAR}?mode=link&url=${encodeURIComponent(url)}&quality=${QUALITY}&apikey=${API_KEY}`
+    console.log('📡 Descargando desde:', apiUrl)
 
     const res = await fetchConTimeout(apiUrl, {
       headers: { 'accept': 'application/json', 'user-agent': 'Mozilla/5.0' }
     })
     const data = await res.json()
+    console.log('📦 Respuesta descarga:', JSON.stringify(data, null, 2))
 
     if (!data.ok) {
       throw new Error(data.error || 'Error al obtener el video')
@@ -169,12 +178,14 @@ async function procesarVideo(m, conn, url) {
 
     videoPath = path.join(tmpDir, `${Date.now()}.mp4`)
 
+    console.log('⬇️ Descargando archivo...')
     const videoRes = await fetchConTimeout(download_url)
     if (!videoRes.ok || !videoRes.body) {
       throw new Error('No se pudo descargar el video')
     }
 
     await pipeline(videoRes.body, fs.createWriteStream(videoPath))
+    console.log('✅ Archivo descargado, enviando...')
 
     await conn.sendMessage(m.chat, {
       document: { url: videoPath },
