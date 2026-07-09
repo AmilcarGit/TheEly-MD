@@ -11,7 +11,7 @@ import {
 let pendientes = {}
 const API_URL  = 'https://api.delirius.store/download/ytmp4'
 const API_KEY  = 'dvyer673989047548'
-const BASE_API = 'https://dv-yer-api.online/ytmp4";'
+const API_BASE = "https://dv-yer-api.online/ytmp4";
 const TIMEOUT_MS = 45000
 
 function fetchConTimeout(url, options = {}) {
