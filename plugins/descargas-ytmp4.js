@@ -9,9 +9,11 @@ import {
 } from '@whiskeysockets/baileys'
 
 let pendientes = {}
-const API_BASE = "https://dv-yer-api.online/ytmp4";
-const API_KEY  = 'dvyer673989047548'
-const API_BASE = "https://dv-yer-api.online/ytmp4";
+
+const API_URL = 'https://dv-yer-api.online/ytmp4'
+const API_KEY = 'dvyer673989047548'
+const QUALITY = '360p'
+const SEARCH_API = 'https://dv-yer-api.online/api/search/youtube'
 const TIMEOUT_MS = 45000
 
 function fetchConTimeout(url, options = {}) {
@@ -31,7 +33,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     `╚══════════════════════════════════╝`
   ].join('\n'))
 
-  const query  = text.trim()
+  const query = text.trim()
   const isLink = query.includes('youtu.be') || query.includes('youtube.com')
 
   await m.react('⏳')
@@ -42,8 +44,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       return
     }
 
-    const searchUrl = `${BASE_API}/api/search/youtube?apiKey=${API_KEY}&query=${encodeURIComponent(query)}`
-    const res  = await fetchConTimeout(searchUrl, {
+    const searchUrl = `${SEARCH_API}?apiKey=${API_KEY}&query=${encodeURIComponent(query)}`
+    const res = await fetchConTimeout(searchUrl, {
       headers: { 'accept': 'application/json', 'user-agent': 'Mozilla/5.0' }
     })
     const json = await res.json()
@@ -106,7 +108,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         ...(imageMessage && { imageMessage })
       },
       body: { text: bodyText },
-      footer: { text: '💫 Powered by API  Edward 🌼' },
+      footer: { text: '💫 Powered by THEELY-MD 🌼' },
       nativeFlowMessage: {
         buttons: [{
           name: 'single_select',
@@ -144,20 +146,33 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 async function procesarVideo(m, conn, url) {
   let videoPath = null
   try {
-    const res  = await fetchConTimeout(`${API_URL}?url=${encodeURIComponent(url)}`)
+    const apiUrl = `${API_URL}?mode=link&url=${encodeURIComponent(url)}&quality=${QUALITY}&apikey=${API_KEY}`
+    console.log('📡 API URL:', apiUrl)
+
+    const res = await fetchConTimeout(apiUrl, {
+      headers: { 'accept': 'application/json', 'user-agent': 'Mozilla/5.0' }
+    })
     const data = await res.json()
 
-    if (!data.status) throw new Error(data.error || 'Error al obtener el video')
+    if (!data.ok) {
+      throw new Error(data.error || 'Error al obtener el video')
+    }
 
-    const { title, download } = data.data
+    const { title, download_url, thumbnail } = data
+
+    if (!download_url) {
+      throw new Error('No se encontró URL de descarga')
+    }
 
     const tmpDir = path.join(process.cwd(), 'tmp')
     if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true })
 
     videoPath = path.join(tmpDir, `${Date.now()}.mp4`)
 
-    const videoRes = await fetchConTimeout(download)
-    if (!videoRes.ok || !videoRes.body) throw new Error('No se pudo descargar el video')
+    const videoRes = await fetchConTimeout(download_url)
+    if (!videoRes.ok || !videoRes.body) {
+      throw new Error('No se pudo descargar el video')
+    }
 
     await pipeline(videoRes.body, fs.createWriteStream(videoPath))
 
@@ -165,7 +180,15 @@ async function procesarVideo(m, conn, url) {
       document: { url: videoPath },
       mimetype: 'video/mp4',
       fileName: `${title}.mp4`,
-      caption: `✅ *${title}*\n💫 Powered by THEELY-MD 🌼`
+      caption: [
+        `╔══〔 🌼 *THEELY-MD — YTMP4* 〕══╗`,
+        `║`,
+        `║ ✅ *Video descargado*`,
+        `║ 🎬 *${title}*`,
+        `║`,
+        `║ 💫 *Powered by THEELY-MD 🌼*`,
+        `╚══════════════════════════════════╝`
+      ].join('\n')
     }, { quoted: m })
 
     await m.react('✅')
@@ -175,7 +198,9 @@ async function procesarVideo(m, conn, url) {
     await m.react('❌')
     m.reply(`❌ Error al procesar el video~\n💡 Verifica que el enlace sea válido`)
   } finally {
-    if (videoPath) fs.promises.unlink(videoPath).catch(() => {})
+    if (videoPath) {
+      try { await fs.promises.unlink(videoPath) } catch {}
+    }
   }
 }
 
@@ -185,14 +210,14 @@ handler.before = async (m, { conn }) => {
 
   try {
     const data = JSON.parse(nativeFlow.paramsJson || '{}')
-    const id   = data.id || data.selectedId || data.selectedRowId
+    const id = data.id || data.selectedId || data.selectedRowId
     if (!id) return false
 
     if (id.startsWith('vtmp4_select_')) {
-      const parts  = id.split('_')
-      const index  = parseInt(parts[2])
+      const parts = id.split('_')
+      const index = parseInt(parts[2])
       const chatId = parts.slice(3).join('_')
-      const pend   = pendientes[chatId]
+      const pend = pendientes[chatId]
 
       if (!pend || pend.type !== 'search') {
         await conn.sendMessage(m.chat, {
@@ -222,9 +247,11 @@ handler.before = async (m, { conn }) => {
   }
 }
 
-handler.help    = ['ytmp4 <nombre o link>']
-handler.tags    = ['descargas']
+handler.help = ['ytmp4 <nombre o link>']
+handler.tags = ['descargas']
 handler.command = ['ytmp4', 'video', 'ytvideo']
-handler.desc    = 'Busca y descarga videos de YouTube'
+handler.desc = 'Busca y descarga videos de YouTube'
+handler.register = false
+handler.limit = false
 
 export default handler
