@@ -9,7 +9,7 @@
 [![Baileys](https://img.shields.io/badge/Baileys-Latest-blue?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
 [![GitHub](https://img.shields.io/badge/GitHub-Repositorio-black?logo=github&style=for-the-badge)](https://github.com/AmilcarGit/TheEly-MD)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow?style=for-the-badge)](./LICENSE)
-[![Estado](https://img.shields.io/badge/Estado-En%20desarrollo-brightgreen?style=for-the-badge)]()
+[![Estado](https://img.shields.io/badge/Estado-En%20desarrollo-brightgreen?style=for-the-badge)](https://github.com/AmilcarGit/TheEly-MD)
 
 > Basado en **@whiskeysockets/baileys**, construido con **Node.js**, diseñado para ser rápido, estable y muy sencillo de personalizar.
 
@@ -29,8 +29,8 @@
 | 📲 **Conectar con código (opcional)** | *Vincula directamente tu número para recibir código de 8 dígitos.* | [![Here](https://img.shields.io/badge/Aquí-green)](https://github.com/AmilcarGit/TheEly-MD/blob/main/config.js) |
 | 🆙 **Nivel de usuarios** | *Ajusta la dificultad para que los usuarios suban de nivel en el bot.* | [![Here](https://img.shields.io/badge/Aquí-green)](https://github.com/AmilcarGit/TheEly-MD/blob/main/config.js) |
 | 😎 **Clonar proyecto** | *Crea tu propia versión usando como base este proyecto.* | [![Here](https://img.shields.io/badge/Aquí-green)](https://github.com/AmilcarGit/TheEly-MD/fork) |
-| 🐈 **Política** | *Descubre el compromiso y la dedicación detrás de este proyecto.* | [![Here](https://img.shields.io/badge/Aquí-green)](pronto/master/terms.md) |
-| ✅ **Colaboradores** | *Conoce a los implicados que hacen posible este proyecto.* | [![Here](https://img.shields.io/badge/Aquí-green)](pronto/contributors) |
+| 🐈 **Política** | *Descubre el compromiso y la dedicación detrás de este proyecto.* | [![Here](https://img.shields.io/badge/Aquí-green)](./LICENSE) |
+| ✅ **Colaboradores** | *Conoce a los implicados que hacen posible este proyecto.* | [![Here](https://img.shields.io/badge/Aquí-green)](https://github.com/AmilcarGit/TheEly-MD/graphs/contributors) |
 </details>  
 </details>
 
@@ -47,8 +47,8 @@
 <details>
   <summary><b>Instalación Manual</b></summary>
  
-[![blog](prontovideo)](https://youtube.com/shorts/PESW8LXXlOI?feature=share)
-> *Comandos para instalar de formaa Manual en Termux*
+[Ver tutorial de instalación en YouTube](https://youtube.com/shorts/PESW8LXXlOI?feature=share)
+> *Comandos para instalar de forma manual en Termux*
 ```bash
 termux-setup-storage
 ```
